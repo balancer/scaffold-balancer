@@ -443,6 +443,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@balancer-labs/v2-interfaces@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@balancer-labs/v2-interfaces@npm:0.3.0"
+  checksum: 375e9c693d89d6e9932c4076dfe008b103c1aacc1ae528eff7837fd051b8c826b4f37693744bbce6d17defc7bd3f2b3c3c17f09b3dd604aeeed24f577976c61d
+  languageName: node
+  linkType: hard
+
+"@balancer-labs/v2-pool-utils@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@balancer-labs/v2-pool-utils@npm:3.1.2"
+  dependencies:
+    "@balancer-labs/v2-interfaces": 0.3.0
+    "@balancer-labs/v2-solidity-utils": 3.0.2
+  checksum: da23901370d4fa714c307c6f1529c31a728abba572365e5205370dad01cd8f10e64eb2874a88aa8f7c98c8e25025ae0139ee72757b8e858fd1dd22a268cbb1e9
+  languageName: node
+  linkType: hard
+
+"@balancer-labs/v2-solidity-utils@npm:3.0.2, @balancer-labs/v2-solidity-utils@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@balancer-labs/v2-solidity-utils@npm:3.0.2"
+  dependencies:
+    "@balancer-labs/v2-interfaces": 0.3.0
+  checksum: d39a11b38b68d92b7a338dc8e49503da1088582b82b24a4506574b266ec03cc42a85abf5aa6697ad8c85fe35273f2d13de59bc26b773b992ed80253f5c20f68c
+  languageName: node
+  linkType: hard
+
 "@coinbase/wallet-sdk@npm:^3.5.2":
   version: 3.5.2
   resolution: "@coinbase/wallet-sdk@npm:3.5.2"
@@ -2496,6 +2522,8 @@ __metadata:
   resolution: "@scaffold-eth/solidity@workspace:packages/solidity-ts"
   dependencies:
     "@atixlabs/hardhat-time-n-mine": ^0.0.5
+    "@balancer-labs/v2-pool-utils": ^3.1.2
+    "@balancer-labs/v2-solidity-utils": ^3.0.2
     "@defi-wonderland/smock": ^2.3.0
     "@eth-optimism/hardhat-ovm": ^0.2.4
     "@ethereumjs/vm": ^5.9.3

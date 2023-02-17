@@ -28,6 +28,7 @@
     "compile": "yarn scaffold compile",
     "deploy": "yarn scaffold deploy",
     "chain": "yarn scaffold chain",
+    "fork": "yarn workspace @scaffold-eth/solidity fork:hardhat",
     "@🔖🔖🔖🔖🔖 solidity contracts 🔖🔖🔖🔖🔖 ": "echo 🔖🔖🔖🔖🔖",
     "contracts:build": "yarn workspace @scaffold-eth/common contracts:build",
     "contracts:clean": "yarn workspace @scaffold-eth/solidity clean && yarn workspace @scaffold-eth/common clean",

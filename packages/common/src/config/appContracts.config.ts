@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {
   createConnectorForExternalAbi,
   createConnectorForExternalContract,
@@ -59,10 +58,29 @@ export const appContractsConfig = () => {
               foundryDeployedContractsJson
             ),
 
+      YourCustomPool:
+        scaffoldConfig.build.solidityToolkit === 'hardhat'
+          ? createConnectorForHardhatContract(
+              'YourCustomPool',
+              toolkitContracts.YourCustomPool__factory,
+              hardhatDeployedContractsJson
+            )
+          : createConnectorForFoundryContract(
+              'YourCustomPool',
+              toolkitContracts.YourCustomPool__factory,
+              foundryDeployedContractsJson
+            ),
+
       // --------------------------------------------------
       // 🙋🏽‍♂️ Add your external contracts here, make sure to define the address in `externalContractsConfig.ts`Í
       // --------------------------------------------------
       DAI: createConnectorForExternalContract('DAI', externalContracts.DAI__factory, externalContractsAddressMap),
+      Vault: createConnectorForExternalContract('Vault', externalContracts.Vault__factory, externalContractsAddressMap),
+      BalancerQueries: createConnectorForExternalContract(
+        'BalancerQueries',
+        externalContracts.BalancerQueries__factory,
+        externalContractsAddressMap
+      ),
 
       // --------------------------------------------------
       // 🙋🏽‍♂️ Add your external abi here (unverified contracts)`

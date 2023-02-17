@@ -14,6 +14,7 @@ import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
 import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
 import { networkDefinitions } from '~common/constants';
 import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
+import { PoolContract } from '~~/components/pool/PoolContract';
 import {
   AVAILABLE_NETWORKS_DEFINITIONS,
   CONNECT_TO_BURNER_AUTOMATICALLY,
@@ -93,6 +94,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
 
   // init contracts
   const yourContract = useAppContracts('YourContract', ethersAppContext.chainId);
+  const yourCustomPool = useAppContracts('YourCustomPool', ethersAppContext.chainId);
   const yourNFT = useAppContracts('YourNFT', ethersAppContext.chainId);
   const mainnetDai = useAppContracts('DAI', networkDefinitions.mainnet.chainId);
 
@@ -125,19 +127,12 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
   // This is the list of tabs and their contents
   const pageList: TContractPageList = {
     mainPage: {
-      name: 'YourContract',
-      content: (
-        <GenericContract
-          contractName="YourContract"
-          contract={yourContract}
-          mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-          blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}
-        />
-      ),
+      name: 'YourCustomPool',
+      content: <PoolContract address="abc" />,
     },
     pages: [
       {
-        name: 'YourNFT',
+        name: 'BalancerQueries',
         content: (
           <GenericContract
             contractName="YourNFT"
@@ -147,7 +142,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
         ),
       },
       {
-        name: 'Mainnet-Dai',
+        name: 'SmartOrderRouter',
         content: (
           <GenericContract
             contractName="Dai"

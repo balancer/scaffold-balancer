@@ -52,8 +52,8 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
     <>
       <div>
         <PageHeader
-          title="🏭 Scaffold-Eth"
-          subTitle={
+          title="🏭 Scaffold-Balancer"
+          /* subTitle={
             <span>
               v2.1 - [
               <a href="https://youtu.be/aYMj00JoIug" target="_blank" rel="noreferrer">
@@ -65,7 +65,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
               </a>
               ]{' '}
             </span>
-          }
+          }*/
           style={{ cursor: 'pointer' }}
         />
       </div>

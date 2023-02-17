@@ -46,7 +46,7 @@ export const FaucetHintButton: FC<IFaucetButton> = (props) => {
   /**
    * create transactor for faucet
    */
-  const faucetTx = transactor(props.ethComponentSettings, signer, undefined, undefined, true);
+  const faucetTx = transactor(props.ethComponentSettings, signer, 18082617247, undefined, true);
 
   /**
    * facuet is only available on localhost

@@ -67,7 +67,7 @@ const ProviderWrapper: FC<{ children?: ReactNode }> = (props) => {
 const MyApp: NextComponentType<AppContext, AppInitialProps, AppProps> = ({ Component, ...props }) => {
   console.log('loading app...');
   const [queryClient] = useState(() => new QueryClient());
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
   const dehydradedState = props.pageProps.dehydratedState as unknown;
 
   return (

@@ -11,5 +11,9 @@ Object.keys(externalContractsAddressMap)
   .map(Number)
   .forEach((chainId) => {
     const networkName = networkIDtoSymbol[chainId as keyof typeof networkIDtoSymbol];
-    contractsByNetworkName[networkName] = externalContractsAddressMap[chainId];
+
+    if (networkName) {
+      // handle instances where the network name is not defined. ie: localhost 31337
+      contractsByNetworkName[networkName] = externalContractsAddressMap[chainId];
+    }
   });
