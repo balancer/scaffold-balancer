@@ -115,7 +115,7 @@ export const PoolContract: FC<Props> = ({ address }) => {
             }}
           />
         )}
-        <div style={{ height: 200 }} />
+        <div style={{ height: 24 }} />
       </Card>
     </div>
   );
