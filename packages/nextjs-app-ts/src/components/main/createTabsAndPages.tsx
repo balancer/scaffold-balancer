@@ -8,6 +8,7 @@ import React, { ReactElement } from 'react';
 type TContractPage = {
   name: string;
   content: JSX.Element;
+  title?: string;
 };
 
 export type TContractPageList = {
@@ -38,11 +39,11 @@ export const createTabsAndPages = (
       }}
       mode="horizontal">
       <Menu.Item key="/">
-        <Link href="/">{pageList.mainPage.name}</Link>
+        <Link href="/">{pageList.mainPage.title || pageList.mainPage.name}</Link>
       </Menu.Item>
-      {pageList.pages.map(({ name }) => (
+      {pageList.pages.map(({ name, title }) => (
         <Menu.Item key={name}>
-          <Link href={'/' + name}>{name}</Link>
+          <Link href={'/' + name}>{title || name}</Link>
         </Menu.Item>
       ))}
     </Menu>

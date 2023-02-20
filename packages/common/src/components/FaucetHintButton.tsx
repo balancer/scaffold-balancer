@@ -9,6 +9,8 @@ import { utils } from 'ethers';
 import React, { FC, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
+import { useTxGasPrice } from '../../../nextjs-app-ts/src/components/pool/hooks/useTxGasPrice';
+
 import { IScaffoldAppProviders } from '~common/models/IScaffoldAppProviders';
 
 /**
@@ -43,10 +45,11 @@ export const FaucetHintButton: FC<IFaucetButton> = (props) => {
 
   const [yourLocalBalance] = useBalance(ethersAppContext.account ?? '');
   const signer = props.scaffoldAppProviders.localAdaptor?.signer;
+  const gasPrice = useTxGasPrice();
   /**
    * create transactor for faucet
    */
-  const faucetTx = transactor(props.ethComponentSettings, signer, 18082617247, undefined, true);
+  const faucetTx = transactor(props.ethComponentSettings, signer, gasPrice, undefined, true);
 
   /**
    * facuet is only available on localhost

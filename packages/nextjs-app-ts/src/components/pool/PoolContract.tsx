@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const PoolContract: FC<Props> = ({ address }) => {
-  const { data, error, refetch } = usePoolData(address);
+  const { data, refetch } = usePoolData(address);
   const { refetch: refetchTokenBalances } = useTokenBalances(data?.poolTokens || []);
 
   return (

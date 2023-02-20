@@ -14,7 +14,7 @@ import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
 import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
 import { networkDefinitions } from '~common/constants';
 import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
-import { PoolContract } from '~~/components/pool/PoolContract';
+import { PoolContractList } from '~~/components/pool/PoolContractList';
 import {
   AVAILABLE_NETWORKS_DEFINITIONS,
   CONNECT_TO_BURNER_AUTOMATICALLY,
@@ -127,12 +127,14 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
   // This is the list of tabs and their contents
   const pageList: TContractPageList = {
     mainPage: {
-      name: 'YourCustomPool',
-      content: <PoolContract address="abc" />,
+      name: 'CustomPools',
+      title: 'Custom Pools',
+      content: <PoolContractList />,
     },
     pages: [
       {
         name: 'BalancerQueries',
+        title: 'Balancer Queries',
         content: (
           <GenericContract
             contractName="YourNFT"
@@ -143,6 +145,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
       },
       {
         name: 'SmartOrderRouter',
+        title: 'Smart Order Router (SOR)',
         content: (
           <GenericContract
             contractName="Dai"
