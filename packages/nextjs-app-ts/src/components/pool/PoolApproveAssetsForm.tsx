@@ -1,7 +1,6 @@
 import { Button } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { EthComponentsSettingsContext } from 'eth-components/models';
-import { useGasPrice } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { Interface } from 'ethers/lib/utils';
 import React, { FC, useContext } from 'react';
@@ -9,6 +8,7 @@ import React, { FC, useContext } from 'react';
 import { useAppContracts } from '~common/components/context';
 import { ERC20__factory } from '~common/generated/contract-types';
 import { useTokenApprovals } from '~~/components/pool/hooks/useTokenApprovals';
+import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
 import { PoolToken } from '~~/components/pool/pool-types';
 import { MaxUint256 } from '~~/helpers/constants';
 
@@ -21,7 +21,7 @@ export const PoolApproveAssetsForm: FC<Props> = ({ poolTokens }) => {
   const { provider, account, chainId } = useEthersAppContext();
   const vault = useAppContracts('Vault', chainId);
   const { data, refetch } = useTokenApprovals(poolTokens);
-  const [gasPrice] = useGasPrice(chainId, 'fast');
+  const gasPrice = useTxGasPrice();
 
   const approve = async (tokenAddress: string): Promise<void> => {
     await provider?.send('hardhat_impersonateAccount', [account]);

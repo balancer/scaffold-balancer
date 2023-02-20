@@ -15,7 +15,7 @@
         "explicitTypes": "always",
 
         "printWidth": 160,
-        "tabWidth": 2,
+        "tabWidth": 4,
         "useTabs": false,
         "singleQuote": false,
         "bracketSpacing": true,

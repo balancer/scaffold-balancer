@@ -2,7 +2,6 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { Button, Input, Modal, Select } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { EthComponentsSettingsContext } from 'eth-components/models';
-import { useGasPrice } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
@@ -10,6 +9,7 @@ import React, { FC, useContext, useState } from 'react';
 
 import { useAppContracts } from '~common/components/context';
 import { useBalancerQueries } from '~~/components/pool/hooks/useBalancerQueries';
+import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
 import { PoolToken } from '~~/components/pool/pool-types';
 
 interface Props {
@@ -32,7 +32,7 @@ export const PoolContractExitForm: FC<Props> = ({ poolId, poolTokens, initialize
   const { provider, account, chainId } = useEthersAppContext();
   const balancerQueries = useBalancerQueries();
   const vault = useAppContracts('Vault', chainId);
-  const [gasPrice] = useGasPrice(chainId, 'fast');
+  const gasPrice = useTxGasPrice();
 
   const queryExitPool = async (): Promise<void> => {
     const result: { bptIn: BigNumber; amountsOut: BigNumber[] } = await balancerQueries.queryExit(
@@ -117,6 +117,9 @@ export const PoolContractExitForm: FC<Props> = ({ poolId, poolTokens, initialize
               }}
               notFoundContent={null}
               style={{ width: '200px', marginRight: 12 }}>
+              <Select.Option value="uint8">
+                <div>uint8</div>
+              </Select.Option>
               <Select.Option value="uint256">
                 <div>uint256</div>
               </Select.Option>

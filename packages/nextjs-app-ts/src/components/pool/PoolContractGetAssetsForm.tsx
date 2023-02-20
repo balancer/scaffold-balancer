@@ -7,6 +7,7 @@ import React, { FC, useContext, useState } from 'react';
 
 import { ERC20__factory } from '~common/generated/contract-types';
 import { useTokenBalances } from '~~/components/pool/hooks/useTokenBalances';
+import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
 import { PoolToken } from '~~/components/pool/pool-types';
 
 interface Props {
@@ -16,10 +17,12 @@ interface Props {
 export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
   const { data: poolTokensWithUserBalance, refetch } = useTokenBalances(poolTokens);
   const settingsContext = useContext(EthComponentsSettingsContext);
+
   const [token, setToken] = useState<string | null>(null);
   const [addressToSnatchFrom, setAddressToSnatchFrom] = useState<string>('');
   const [amountToSnatch, setAmountToSnatch] = useState<string>('');
   const { provider, account } = useEthersAppContext();
+  const gasPrice = useTxGasPrice();
 
   const snatch = async (): Promise<void> => {
     await provider?.send('hardhat_impersonateAccount', [addressToSnatchFrom]);
@@ -28,8 +31,7 @@ export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
 
     const data = tokenInterface.encodeFunctionData('transfer', [account, parseUnits(amountToSnatch, 18)]);
 
-    // TODO: do proper gas estimations
-    const wrapper = transactor(settingsContext, signer, 16298033250);
+    const wrapper = transactor(settingsContext, signer, gasPrice);
 
     if (wrapper) {
       await wrapper({ to: token || '', data });

@@ -1,7 +1,6 @@
 import { Button, Input, Modal, Select } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { EthComponentsSettingsContext } from 'eth-components/models';
-import { useGasPrice } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
@@ -9,6 +8,7 @@ import React, { FC, useContext, useState } from 'react';
 
 import { useAppContracts } from '~common/components/context';
 import { useBalancerQueries } from '~~/components/pool/hooks/useBalancerQueries';
+import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
 import { PoolToken } from '~~/components/pool/pool-types';
 import { MaxUint256 } from '~~/helpers/constants';
 
@@ -23,7 +23,7 @@ export const PoolContractSwapForm: FC<Props> = ({ poolTokens, poolId, initialize
   const settingsContext = useContext(EthComponentsSettingsContext);
   const { provider, account, chainId } = useEthersAppContext();
   const vault = useAppContracts('Vault', chainId);
-  const [gasPrice] = useGasPrice(chainId, 'fast');
+  const gasPrice = useTxGasPrice();
   const [swapType, setSwapType] = useState<string | null>(null);
   const [tokenIn, setTokenIn] = useState<string | null>(null);
   const [tokenOut, setTokenOut] = useState<string | null>(null);
