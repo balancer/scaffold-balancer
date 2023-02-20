@@ -1,8 +1,10 @@
-import { Button, Card, Col, Divider, Input, Row } from 'antd';
+import { Card, Col, Divider, Row } from 'antd';
 import { Address } from 'eth-components/ant';
 import { FC } from 'react';
 
 import { usePoolData } from '~~/components/pool/hooks/usePoolData';
+import { useTokenBalances } from '~~/components/pool/hooks/useTokenBalances';
+import { PoolApproveAssetsForm } from '~~/components/pool/PoolApproveAssetsForm';
 import { PoolContractGetAssetsForm } from '~~/components/pool/PoolContractGetAssetsForm';
 import { PoolContractJoinForm } from '~~/components/pool/PoolContractJoinForm';
 import { PoolContractSwapForm } from '~~/components/pool/PoolContractSwapForm';
@@ -12,7 +14,8 @@ interface Props {
 }
 
 export const PoolContract: FC<Props> = ({ address }) => {
-  const { data, error } = usePoolData(address);
+  const { data, error, refetch } = usePoolData(address);
+  const { refetch: refetchTokenBalances } = useTokenBalances(data?.poolTokens || []);
 
   return (
     <div style={{ margin: 'auto', width: '70vw' }}>
@@ -64,13 +67,6 @@ export const PoolContract: FC<Props> = ({ address }) => {
           </Col>
         </Row>
         <Divider style={{ margin: '10px 0' }} />
-        {/* <Row style={{ margin: 0, padding: 0, fontSize: 14 }}>
-          <Col span={8}>In recovery mode</Col>
-          <Col span={16} style={{ textAlign: "right" }}>
-            {poolData?.inRecoveryMode ? "true" : "false"}
-          </Col>
-        </Row>
-        <Divider style={{ margin: "10px 0" }} />*/}
         <Row style={{ margin: 0, padding: 0, fontSize: 14 }}>
           <Col span={8}>Vault</Col>
           <Col span={16} style={{ textAlign: 'right' }}>
@@ -81,40 +77,32 @@ export const PoolContract: FC<Props> = ({ address }) => {
         <Divider style={{ margin: '12px 0' }} />
         <PoolContractGetAssetsForm poolTokens={data?.poolTokens || []} />
         <Divider style={{ margin: '18px 0' }} />
-        <PoolContractSwapForm poolTokens={data?.poolTokens || []} />
-        <Divider style={{ margin: '12px 0' }} />
-        {data && <PoolContractJoinForm poolId={data.poolId} poolTokens={data.poolTokens} />}
+        <PoolApproveAssetsForm poolTokens={data?.poolTokens || []} />
         <Divider style={{ margin: '18px 0' }} />
-        <div>
-          <div style={{ fontSize: 16, marginBottom: 4 }}>Join</div>
-          <Input
-            onChange={(e) => {
-              // setNewPurpose(e.target.value);
+        {data && (
+          <PoolContractJoinForm
+            poolId={data.poolId}
+            poolTokens={data.poolTokens}
+            initialized={data && data.totalSupply !== '0.0'}
+            refetchData={async () => {
+              await refetch();
+              await refetchTokenBalances();
             }}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-            <Button style={{ marginRight: 8 }}>Query</Button>
-            <Button type="primary">Execute</Button>
-          </div>
-        </div>
-
-        <Divider style={{ margin: '12px 0' }} />
-        <div>
-          <div style={{ fontSize: 16, marginBottom: 4 }}>Exit</div>
-          <Input
-            onChange={(e) => {
-              // setNewPurpose(e.target.value);
+        )}
+        <Divider style={{ margin: '18px 0' }} />
+        {data && (
+          <PoolContractSwapForm
+            poolId={data.poolId}
+            poolTokens={data.poolTokens}
+            initialized={data && data.totalSupply !== '0.0'}
+            refetchData={async () => {
+              await refetch();
+              await refetchTokenBalances();
             }}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-            <Button style={{ marginRight: 8 }}>Query</Button>
-            <Button type="primary">Execute</Button>
-          </div>
-        </div>
-
-        <Divider style={{ margin: '12px 0' }} />
-
-        {/* contractIsDeployed ? contractDisplay : noContractDisplay*/}
+        )}
+        <div style={{ height: 200 }} />
       </Card>
     </div>
   );

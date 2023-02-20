@@ -1,16 +1,97 @@
-import { Button, Input, Select } from 'antd';
-import React, { FC, useState } from 'react';
+import { Button, Input, Modal, Select } from 'antd';
+import { transactor } from 'eth-components/functions';
+import { EthComponentsSettingsContext } from 'eth-components/models';
+import { useGasPrice } from 'eth-hooks';
+import { useEthersAppContext } from 'eth-hooks/context';
+import { BigNumber } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import React, { FC, useContext, useState } from 'react';
 
-import { PoolToken } from '~~/components/pool/hooks/usePoolData';
+import { useAppContracts } from '~common/components/context';
+import { useBalancerQueries } from '~~/components/pool/hooks/useBalancerQueries';
+import { PoolToken } from '~~/components/pool/pool-types';
+import { MaxUint256 } from '~~/helpers/constants';
 
 interface Props {
   poolTokens: PoolToken[];
+  poolId: string;
+  initialized: boolean;
+  refetchData: () => Promise<void>;
 }
 
-export const PoolContractSwapForm: FC<Props> = ({ poolTokens }) => {
+export const PoolContractSwapForm: FC<Props> = ({ poolTokens, poolId, initialized, refetchData }) => {
+  const settingsContext = useContext(EthComponentsSettingsContext);
+  const { provider, account, chainId } = useEthersAppContext();
+  const vault = useAppContracts('Vault', chainId);
+  const [gasPrice] = useGasPrice(chainId, 'fast');
   const [swapType, setSwapType] = useState<string | null>(null);
   const [tokenIn, setTokenIn] = useState<string | null>(null);
   const [tokenOut, setTokenOut] = useState<string | null>(null);
+  const [amount, setAmount] = useState<string>('');
+  const balancerQueries = useBalancerQueries();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [querySwapResponse, setQuerySwapResponse] = useState<string>('0,0');
+  const amountToken = poolTokens.find((token) =>
+    swapType === 'GIVEN_IN' ? token.address === tokenIn : token.address === tokenOut
+  );
+  const otherToken = poolTokens.find((token) =>
+    swapType === 'GIVEN_IN' ? token.address === tokenOut : token.address === tokenIn
+  );
+
+  const querySwap = async (): Promise<void> => {
+    const result: BigNumber = await balancerQueries.querySwap(
+      {
+        poolId,
+        kind: swapType === 'GIVEN_IN' ? 0 : 1,
+        assetIn: tokenIn,
+        assetOut: tokenOut,
+        amount: parseUnits(amount, amountToken?.decimals || 18).toString(),
+        userData: '0x',
+      },
+      {
+        sender: account || '',
+        fromInternalBalance: false,
+        recipient: account || '',
+        toInternalBalance: false,
+      }
+    );
+
+    setQuerySwapResponse(formatUnits(result, otherToken?.decimals || 18));
+
+    setIsModalOpen(true);
+  };
+
+  const swap = async (): Promise<void> => {
+    await provider?.send('hardhat_impersonateAccount', [account]);
+    const signer = provider?.getSigner(account);
+
+    const wrapper = transactor(settingsContext, signer, gasPrice);
+
+    if (wrapper && account && tokenIn && tokenOut) {
+      await wrapper(
+        vault.swap(
+          {
+            poolId,
+            kind: swapType === 'GIVEN_IN' ? 0 : 1,
+            assetIn: tokenIn,
+            assetOut: tokenOut,
+            amount: parseUnits(amount, amountToken?.decimals || 18).toString(),
+            userData: '0x',
+          },
+          {
+            sender: account,
+            fromInternalBalance: false,
+            recipient: account,
+            toInternalBalance: false,
+          },
+          swapType === 'GIVEN_IN' ? 0 : MaxUint256,
+          MaxUint256
+        )
+      );
+    }
+
+    await refetchData();
+  };
 
   return (
     <div>
@@ -20,13 +101,11 @@ export const PoolContractSwapForm: FC<Props> = ({ poolTokens }) => {
           showArrow={true}
           defaultActiveFirstOption={true}
           filterOption={false}
-          labelInValue={true}
+          labelInValue={false}
           id="swapType"
           value={swapType}
-          onChange={(e): void => {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            setSwapType(e.value);
+          onChange={(value): void => {
+            setSwapType(value);
           }}
           placeholder="Swap type"
           notFoundContent={null}
@@ -43,13 +122,11 @@ export const PoolContractSwapForm: FC<Props> = ({ poolTokens }) => {
           showArrow={true}
           defaultActiveFirstOption={false}
           filterOption={false}
-          labelInValue={true}
+          labelInValue={false}
           id="tokenIn"
           value={tokenIn}
-          onChange={(e): void => {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            setTokenIn(e.value);
+          onChange={(value): void => {
+            setTokenIn(value);
           }}
           placeholder="Token in"
           notFoundContent={null}
@@ -65,13 +142,11 @@ export const PoolContractSwapForm: FC<Props> = ({ poolTokens }) => {
           showArrow={true}
           defaultActiveFirstOption={false}
           filterOption={false}
-          labelInValue={true}
+          labelInValue={false}
           id="tokenOut"
           value={tokenOut}
-          onChange={(e): void => {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            setTokenOut(e.value);
+          onChange={(value): void => {
+            setTokenOut(value);
           }}
           placeholder="Token out"
           notFoundContent={null}
@@ -84,16 +159,43 @@ export const PoolContractSwapForm: FC<Props> = ({ poolTokens }) => {
         </Select>
         <Input
           onChange={(e) => {
-            // setNewPurpose(e.target.value);
+            setAmount(e.target.value);
           }}
-          placeholder={swapType === 'GIVEN_OUT' ? 'Amount out' : 'Amount in'}
+          value={amount}
+          placeholder={`Human amount ${swapType === 'GIVEN_OUT' ? 'out' : 'in'}. ie: 10.0 = 10 WETH`}
         />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-        <Button style={{ marginRight: 8 }}>Query</Button>
-        <Button type="primary">Execute</Button>
+        <Button
+          style={{ marginRight: 8 }}
+          onClick={() => {
+            void querySwap();
+          }}>
+          Query
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            void swap();
+          }}>
+          Execute
+        </Button>
       </div>
+      <Modal
+        title="Query Swap Response"
+        open={isModalOpen}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}>
+        <div>
+          {
+            poolTokens.find((token) =>
+              swapType === 'GIVEN_IN' ? token.address === tokenOut : token.address === tokenIn
+            )?.symbol
+          }{' '}
+          {swapType === 'GIVEN_IN' ? 'out' : 'in'}: {querySwapResponse}
+        </div>
+      </Modal>
     </div>
   );
 };

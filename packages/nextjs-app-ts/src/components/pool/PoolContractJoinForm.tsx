@@ -1,100 +1,94 @@
-/*
-function queryJoin(
-        bytes32 poolId,
-        address sender,
-        address recipient,
-        IVault.JoinPoolRequest memory request
-    ) external override returns (uint256 bptOut, uint256[] memory amountsIn) {
-        (address pool, ) = vault.getPool(poolId);
-        (uint256[] memory balances, uint256 lastChangeBlock) = _validateAssetsAndGetBalances(poolId, request.assets);
-        IProtocolFeesCollector feesCollector = vault.getProtocolFeesCollector();
-
-        (bptOut, amountsIn) = IBasePool(pool).queryJoin(
-            poolId,
-            sender,
-            recipient,
-            balances,
-            lastChangeBlock,
-            feesCollector.getSwapFeePercentage(),
-            request.userData
-        );
-    }
-
-    struct JoinPoolRequest {
-        IAsset[] assets;
-        uint256[] maxAmountsIn;
-        bytes userData;
-        bool fromInternalBalance;
-    }
- */
-
-import { Button, Input, Select } from 'antd';
+import { defaultAbiCoder } from '@ethersproject/abi';
+import { Button, Input, Modal, Select } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { EthComponentsSettingsContext } from 'eth-components/models';
+import { useGasPrice } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
-import { Interface, parseUnits } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import React, { FC, useContext, useState } from 'react';
 
 import { useAppContracts } from '~common/components/context';
-import { ERC20__factory } from '~common/generated/contract-types';
-import { useTokenBalances } from '~~/components/pool/hooks/useTokenBalances';
+import { useBalancerQueries } from '~~/components/pool/hooks/useBalancerQueries';
 import { PoolToken } from '~~/components/pool/pool-types';
-
-export const MAX_UINT112 = '5192296858534827628530496329220095';
-import { defaultAbiCoder } from '@ethersproject/abi';
+import { MaxUint256 } from '~~/helpers/constants';
 
 interface Props {
   poolId: string;
   poolTokens: PoolToken[];
+  initialized: boolean;
+  refetchData: () => Promise<void>;
 }
 
-export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens }) => {
+export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens, initialized, refetchData }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [queryJoinResponse, setQueryJoinResponse] = useState<{ bptOut: string; amountsIn: string[] }>({
+    bptOut: '0.0',
+    amountsIn: [],
+  });
   const [userDataItems, setUserDataItems] = useState<{ type: string; value: string | string }[]>([
     { type: 'uint256', value: '0' },
   ]);
-
-  const { data: poolTokensWithUserBalance, refetch } = useTokenBalances(poolTokens);
   const settingsContext = useContext(EthComponentsSettingsContext);
-  const [token, setToken] = useState<string | null>(null);
-  const [addressToSnatchFrom, setAddressToSnatchFrom] = useState<string>('');
-  const [amountToSnatch, setAmountToSnatch] = useState<string>('');
   const { provider, account, chainId } = useEthersAppContext();
-  const balancerQueries = useAppContracts('BalancerQueries', chainId);
+  const balancerQueries = useBalancerQueries();
+  const vault = useAppContracts('Vault', chainId);
+  const [gasPrice] = useGasPrice(chainId, 'fast');
 
-  const queryJoin = async (): Promise<void> => {
-    const result = await balancerQueries.queryJoin(poolId, account || '', account || '', {
-      assets: poolTokens.map((token) => token.address),
-      maxAmountsIn: poolTokens.map((token) => MAX_UINT112),
-      userData: defaultAbiCoder.encode(
-        userDataItems.map((item) => item.type),
-        userDataItems.map((item) => (item.type === 'uint256[]' ? item.value.split(',') : item.value))
-      ),
-      fromInternalBalance: false,
+  const queryJoinPool = async (): Promise<void> => {
+    const result: { bptOut: BigNumber; amountsIn: BigNumber[] } = await balancerQueries.queryJoin(
+      poolId,
+      account || '',
+      account || '',
+      {
+        assets: poolTokens.map((token) => token.address),
+        maxAmountsIn: poolTokens.map(() => MaxUint256),
+        userData: defaultAbiCoder.encode(
+          userDataItems.map((item) => item.type),
+          userDataItems.map((item) => (item.type === 'uint256[]' ? item.value.split(',') : item.value))
+        ),
+        fromInternalBalance: false,
+      }
+    );
+
+    setQueryJoinResponse({
+      bptOut: formatUnits(result.bptOut, 18),
+      amountsIn: poolTokens.map((token, index) => formatUnits(result.amountsIn[index], token.decimals)),
     });
+
+    setIsModalOpen(true);
   };
 
-  const snatch = async (): Promise<void> => {
-    await provider?.send('hardhat_impersonateAccount', [addressToSnatchFrom]);
-    const signer = provider?.getSigner(addressToSnatchFrom);
-    const tokenInterface = new Interface(ERC20__factory.abi);
+  const joinPool = async (): Promise<void> => {
+    await provider?.send('hardhat_impersonateAccount', [account]);
+    const signer = provider?.getSigner(account);
 
-    const data = tokenInterface.encodeFunctionData('transfer', [account, parseUnits(amountToSnatch, 18)]);
+    const wrapper = transactor(settingsContext, signer, gasPrice);
 
-    // TODO: do proper gas estimations
-    const wrapper = transactor(settingsContext, signer, 9234184629);
-
-    if (wrapper) {
-      await wrapper({ to: token || '', data });
-      await refetch();
+    if (wrapper && account) {
+      await wrapper(
+        vault.joinPool(poolId, account, account, {
+          assets: poolTokens.map((token) => token.address),
+          maxAmountsIn: poolTokens.map((token) => MaxUint256),
+          userData: defaultAbiCoder.encode(
+            userDataItems.map((item) => item.type),
+            userDataItems.map((item) => (item.type === 'uint256[]' ? item.value.split(',') : item.value))
+          ),
+          fromInternalBalance: false,
+        })
+      );
     }
+
+    await refetchData();
   };
 
   return (
     <div>
       <div style={{ fontSize: 16 }}>Join pool</div>
       <div style={{ fontSize: 14, marginBottom: 12, color: 'gray' }}>
-        To build your join user data, select the type and then enter the value. Items will be encoded in they order they
-        are specified. For uint256[], provide a comma separated list of values.
+        To build the join user data, select the type and then enter the value. Items will be encoded in they order they
+        are specified. For uint256[], provide a comma separated list of values. Note: Querying a join does not work
+        until the pool is initialized.
       </div>
 
       {userDataItems.map((userDataItem, index) => {
@@ -126,11 +120,6 @@ export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens }) => {
             <Input
               value={userDataItems[index].value}
               onChange={(e): void => {
-                console.log('value', [
-                  ...userDataItems.slice(0, index),
-                  { type: userDataItems[index].type, value: e.target.value },
-                  ...userDataItems.slice(index + 1),
-                ]);
                 setUserDataItems([
                   ...userDataItems.slice(0, index),
                   { type: userDataItems[index].type, value: e.target.value },
@@ -155,14 +144,34 @@ export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens }) => {
         <div style={{ display: 'flex' }}>
           <Button
             style={{ marginRight: 8 }}
+            disabled={!initialized}
             onClick={() => {
-              void queryJoin();
+              void queryJoinPool();
             }}>
             Query
           </Button>
-          <Button type="primary">Execute</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              void joinPool();
+            }}>
+            Execute
+          </Button>
         </div>
       </div>
+      <Modal
+        title="Query Join Response"
+        open={isModalOpen}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}>
+        <div>BPT Out: {queryJoinResponse.bptOut}</div>
+        <div style={{ marginTop: 12 }}>Amounts in:</div>
+        {queryJoinResponse.amountsIn.map((amount, index) => (
+          <div key={index}>
+            {poolTokens[index].symbol}: {amount}
+          </div>
+        ))}
+      </Modal>
     </div>
   );
 };
