@@ -5,6 +5,7 @@ import { FC } from 'react';
 import { usePoolData } from '~~/components/pool/hooks/usePoolData';
 import { useTokenBalances } from '~~/components/pool/hooks/useTokenBalances';
 import { PoolApproveAssetsForm } from '~~/components/pool/PoolApproveAssetsForm';
+import { PoolContractExitForm } from '~~/components/pool/PoolContractExitForm';
 import { PoolContractGetAssetsForm } from '~~/components/pool/PoolContractGetAssetsForm';
 import { PoolContractJoinForm } from '~~/components/pool/PoolContractJoinForm';
 import { PoolContractSwapForm } from '~~/components/pool/PoolContractSwapForm';
@@ -93,6 +94,18 @@ export const PoolContract: FC<Props> = ({ address }) => {
         <Divider style={{ margin: '18px 0' }} />
         {data && (
           <PoolContractSwapForm
+            poolId={data.poolId}
+            poolTokens={data.poolTokens}
+            initialized={data && data.totalSupply !== '0.0'}
+            refetchData={async () => {
+              await refetch();
+              await refetchTokenBalances();
+            }}
+          />
+        )}
+        <Divider style={{ margin: '18px 0' }} />
+        {data && (
+          <PoolContractExitForm
             poolId={data.poolId}
             poolTokens={data.poolTokens}
             initialized={data && data.totalSupply !== '0.0'}

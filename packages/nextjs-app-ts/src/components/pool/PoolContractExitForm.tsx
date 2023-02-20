@@ -11,7 +11,6 @@ import React, { FC, useContext, useState } from 'react';
 import { useAppContracts } from '~common/components/context';
 import { useBalancerQueries } from '~~/components/pool/hooks/useBalancerQueries';
 import { PoolToken } from '~~/components/pool/pool-types';
-import { MaxUint256 } from '~~/helpers/constants';
 
 interface Props {
   poolId: string;
@@ -20,11 +19,11 @@ interface Props {
   refetchData: () => Promise<void>;
 }
 
-export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens, initialized, refetchData }) => {
+export const PoolContractExitForm: FC<Props> = ({ poolId, poolTokens, initialized, refetchData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [queryJoinResponse, setQueryJoinResponse] = useState<{ bptOut: string; amountsIn: string[] }>({
-    bptOut: '0.0',
-    amountsIn: [],
+  const [queryExitResponse, setQueryExitResponse] = useState<{ bptIn: string; amountsOut: string[] }>({
+    bptIn: '0.0',
+    amountsOut: [],
   });
   const [userDataItems, setUserDataItems] = useState<{ type: string; value: string | string }[]>([
     { type: 'uint256', value: '0' },
@@ -35,46 +34,55 @@ export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens, initialize
   const vault = useAppContracts('Vault', chainId);
   const [gasPrice] = useGasPrice(chainId, 'fast');
 
-  const queryJoinPool = async (): Promise<void> => {
-    const result: { bptOut: BigNumber; amountsIn: BigNumber[] } = await balancerQueries.queryJoin(
+  const queryExitPool = async (): Promise<void> => {
+    const result: { bptIn: BigNumber; amountsOut: BigNumber[] } = await balancerQueries.queryExit(
       poolId,
       account || '',
       account || '',
       {
         assets: poolTokens.map((token) => token.address),
-        maxAmountsIn: poolTokens.map(() => MaxUint256),
+        minAmountsOut: poolTokens.map(() => 0),
         userData: defaultAbiCoder.encode(
           userDataItems.map((item) => item.type),
           userDataItems.map((item) => (item.type === 'uint256[]' ? item.value.split(',') : item.value))
         ),
-        fromInternalBalance: false,
+        toInternalBalance: false,
       }
     );
 
-    setQueryJoinResponse({
-      bptOut: formatUnits(result.bptOut, 18),
-      amountsIn: poolTokens.map((token, index) => formatUnits(result.amountsIn[index], token.decimals)),
+    setQueryExitResponse({
+      bptIn: formatUnits(result.bptIn, 18),
+      amountsOut: poolTokens.map((token, index) => formatUnits(result.amountsOut[index], token.decimals)),
     });
 
     setIsModalOpen(true);
   };
 
-  const joinPool = async (): Promise<void> => {
+  const exitPool = async (): Promise<void> => {
     await provider?.send('hardhat_impersonateAccount', [account]);
     const signer = provider?.getSigner(account);
 
     const wrapper = transactor(settingsContext, signer, gasPrice);
 
     if (wrapper && account) {
+      console.log(poolId, account, account, {
+        assets: poolTokens.map((token) => token.address),
+        minAmountsOut: poolTokens.map((token) => 0),
+        userData: defaultAbiCoder.encode(
+          userDataItems.map((item) => item.type),
+          userDataItems.map((item) => (item.type === 'uint256[]' ? item.value.split(',') : item.value))
+        ),
+        toInternalBalance: false,
+      });
       await wrapper(
-        vault.joinPool(poolId, account, account, {
+        vault.exitPool(poolId, account, account, {
           assets: poolTokens.map((token) => token.address),
-          maxAmountsIn: poolTokens.map((token) => MaxUint256),
+          minAmountsOut: poolTokens.map((token) => 0),
           userData: defaultAbiCoder.encode(
             userDataItems.map((item) => item.type),
             userDataItems.map((item) => (item.type === 'uint256[]' ? item.value.split(',') : item.value))
           ),
-          fromInternalBalance: false,
+          toInternalBalance: false,
         })
       );
     }
@@ -84,11 +92,10 @@ export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens, initialize
 
   return (
     <div>
-      <div style={{ fontSize: 16 }}>Join pool</div>
+      <div style={{ fontSize: 16 }}>Exit pool</div>
       <div style={{ fontSize: 14, marginBottom: 12, color: 'gray' }}>
-        To build the join user data, select the type and then enter the value. Items will be encoded in the order they
-        are specified. For uint256[], provide a comma separated list of values. Note: Querying a join does not work
-        until the pool is initialized.
+        To build the exit user data, select the type and then enter the value. Items will be encoded in the order they
+        are specified. For uint256[], provide a comma separated list of values.
       </div>
 
       {userDataItems.map((userDataItem, index) => {
@@ -146,27 +153,27 @@ export const PoolContractJoinForm: FC<Props> = ({ poolId, poolTokens, initialize
             style={{ marginRight: 8 }}
             disabled={!initialized}
             onClick={() => {
-              void queryJoinPool();
+              void queryExitPool();
             }}>
             Query
           </Button>
           <Button
             type="primary"
             onClick={() => {
-              void joinPool();
+              void exitPool();
             }}>
             Execute
           </Button>
         </div>
       </div>
       <Modal
-        title="Query Join Response"
+        title="Query Exit Response"
         open={isModalOpen}
         onOk={() => setIsModalOpen(false)}
         onCancel={() => setIsModalOpen(false)}>
-        <div>BPT Out: {queryJoinResponse.bptOut}</div>
-        <div style={{ marginTop: 12 }}>Amounts in:</div>
-        {queryJoinResponse.amountsIn.map((amount, index) => (
+        <div>BPT In: {queryExitResponse.bptIn}</div>
+        <div style={{ marginTop: 12 }}>Amounts out:</div>
+        {queryExitResponse.amountsOut.map((amount, index) => (
           <div key={index}>
             {poolTokens[index].symbol}: {amount}
           </div>
