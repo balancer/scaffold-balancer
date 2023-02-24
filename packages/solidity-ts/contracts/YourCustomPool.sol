@@ -16,7 +16,6 @@ pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "@balancer-labs/v2-pool-utils/contracts/BaseMinimalSwapInfoPool.sol";
-import "hardhat/console.sol";
 
 contract YourCustomPool is BaseMinimalSwapInfoPool {
     using FixedPoint for uint256;
@@ -61,27 +60,48 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
         _scalingFactor1 = _computeScalingFactor(tokens[1]);
     }
 
+    /**
+     * @dev Returns the maximum possible number of tokens this pool could have.
+     */
     function _getMaxTokens() internal pure virtual override returns (uint256) {
         return _NUM_TOKENS;
     }
 
+    /**
+     * @dev Returns the total number of tokens in this pool.
+     */
     function _getTotalTokens() internal view virtual override returns (uint256) {
         return _NUM_TOKENS;
     }
 
+    /**
+     * @dev Returns the scaling factor for one of the Pool's tokens. Reverts if `token` is not a token registered by the
+     * Pool.
+     *
+     * All scaling factors are fixed-point values with 18 decimals, to allow for this function to be overridden by
+     * derived contracts that need to apply further scaling, making these factors potentially non-integer.
+     *
+     * The largest 'base' scaling factor (i.e. in tokens with less than 18 decimals) is 10**18, which in fixed-point is
+     * 10**36. This value can be multiplied with a 112 bit Vault balance with no overflow by a factor of ~1e7, making
+     * even relatively 'large' factors safe to use.
+     *
+     * The 1e7 figure is the result of 2**256 / (1e18 * 1e18 * 2**112).
+     */
     function _scalingFactor(IERC20 token) internal view virtual override returns (uint256) {
         // prettier-ignore
         if (token == _token0) {
             return _scalingFactor0;
         } else if (token == _token1) {
             return _scalingFactor1;
-        } else {
-            _revert(Errors.INVALID_TOKEN);
         }
     }
 
+    /**
+     * @dev Same as `_scalingFactor()`, except for all registered tokens (in the same order as registered). The Vault
+     * will always pass balances in this order when calling any of the Pool hooks.
+     */
     function _scalingFactors() internal view virtual override returns (uint256[] memory) {
-        uint256[] memory scalingFactors = new uint256[](2);
+        uint256[] memory scalingFactors = new uint256[](_NUM_TOKENS);
 
         scalingFactors[0] = _scalingFactor0;
         scalingFactors[1] = _scalingFactor1;
@@ -89,6 +109,17 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
         return scalingFactors;
     }
 
+    /*
+     * @dev Called when a swap with the Pool occurs, where the amount of tokens entering the Pool is known.
+     *
+     * Returns the amount of tokens that will be taken from the Pool in return.
+     *
+     * All amounts inside `swapRequest`, `balanceTokenIn`, and `balanceTokenOut` are upscaled. The swap fee has already
+     * been deducted from `swapRequest.amount`.
+     *
+     * The return value is also considered upscaled, and will be downscaled (rounding down) before returning it to the
+     * Vault.
+     */
     function _onSwapGivenIn(
         SwapRequest memory swapRequest,
         uint256 currentBalanceTokenIn,
@@ -102,6 +133,16 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
         return currentBalanceTokenOut.mulDown(base.complement());
     }
 
+    /*
+     * @dev Called when a swap with the Pool occurs, where the amount of tokens exiting the Pool is known.
+     *
+     * Returns the amount of tokens that will be granted to the Pool in return.
+     *
+     * All amounts inside `swapRequest`, `balanceTokenIn`, and `balanceTokenOut` are upscaled.
+     *
+     * The return value is also considered upscaled, and will be downscaled (rounding up) before applying the swap fee
+     * and returning it to the Vault.
+     */
     function _onSwapGivenOut(
         SwapRequest memory swapRequest,
         uint256 currentBalanceTokenIn,
@@ -126,7 +167,7 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
      * Minted BPT will be sent to `recipient`, except for _getMinimumBpt(), which will be deducted from this amount and
      * sent to the zero address instead. This will cause that BPT to remain forever locked there, preventing total BTP
      * from ever dropping below that value, and ensuring `_onInitializePool` can only be called once in the entire
-     * Pool's lifetime.
+     * Pool's lifetime. The default value of _getMinimumBpt ie 1e6
      *
      * The tokens granted to the Pool will be transferred from `sender`. These amounts are considered upscaled and will
      * be downscaled (rounding up) before being returned to the Vault.
@@ -153,6 +194,23 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
         return (bptAmountOut, amountsIn);
     }
 
+    /**
+     * @dev Called whenever the Pool is joined after the first initialization join (see `_onInitializePool`).
+     *
+     * Returns the amount of BPT to mint, the token amounts that the Pool will receive in return, and the number of
+     * tokens to pay in protocol swap fees.
+     *
+     * Implementations of this function might choose to mutate the `balances` array to save gas (e.g. when
+     * performing intermediate calculations, such as subtraction of due protocol fees). This can be done safely.
+     *
+     * Minted BPT will be sent to `recipient`.
+     *
+     * The tokens granted to the Pool will be transferred from `sender`. These amounts are considered upscaled and will
+     * be downscaled (rounding up) before being returned to the Vault.
+     *
+     * Due protocol swap fees will be taken from the Pool's balance in the Vault (see `IBasePool.onJoinPool`). These
+     * amounts are considered upscaled and will be downscaled (rounding down) before being returned to the Vault.
+     */
     function _onJoinPool(
         bytes32,
         address,
@@ -171,6 +229,23 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
         return (bptAmountOut, amountsIn);
     }
 
+    /**
+     * @dev Called whenever the Pool is exited.
+     *
+     * Returns the amount of BPT to burn, the token amounts for each Pool token that the Pool will grant in return, and
+     * the number of tokens to pay in protocol swap fees.
+     *
+     * Implementations of this function might choose to mutate the `balances` array to save gas (e.g. when
+     * performing intermediate calculations, such as subtraction of due protocol fees). This can be done safely.
+     *
+     * BPT will be burnt from `sender`.
+     *
+     * The Pool will grant tokens to `recipient`. These amounts are considered upscaled and will be downscaled
+     * (rounding down) before being returned to the Vault.
+     *
+     * Due protocol swap fees will be taken from the Pool's balance in the Vault (see `IBasePool.onExitPool`). These
+     * amounts are considered upscaled and will be downscaled (rounding down) before being returned to the Vault.
+     */
     function _onExitPool(
         bytes32,
         address,
@@ -185,6 +260,13 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
         amountsOut = _computeProportionalAmountsOut(balances, totalSupply(), bptAmountIn);
     }
 
+    /**
+     * @dev A minimal proportional exit, suitable as is for most pools: though not for pools with preminted BPT
+     * or other special considerations. Designed to be overridden if a pool needs to do extra processing,
+     * such as scaling a stored invariant, or caching the new total supply.
+     *
+     * No complex code or external calls should be made in derived contracts that override this!
+     */
     function _doRecoveryModeExit(
         uint256[] memory balances,
         uint256 totalSupply,
