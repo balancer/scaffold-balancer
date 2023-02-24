@@ -68,15 +68,15 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
     }
 
     /**
-     * @dev Returns the total number of tokens in this pool.
+     * @dev Returns the number of tokens in this pool.
      */
     function _getTotalTokens() internal view virtual override returns (uint256) {
         return _NUM_TOKENS;
     }
 
     /**
-     * @dev Returns the scaling factor for one of the Pool's tokens. Reverts if `token` is not a token registered by the
-     * Pool.
+     * @dev Returns the scaling factor for one of the Pool's tokens. Should revert with Errors.INVALID_TOKEN if `token`
+     * is not a token registered by the Pool.
      *
      * All scaling factors are fixed-point values with 18 decimals, to allow for this function to be overridden by
      * derived contracts that need to apply further scaling, making these factors potentially non-integer.
@@ -93,6 +93,8 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
             return _scalingFactor0;
         } else if (token == _token1) {
             return _scalingFactor1;
+        } else {
+            _revert(Errors.INVALID_TOKEN);
         }
     }
 
@@ -164,13 +166,13 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
      *
      * Returns the amount of BPT to mint, and the token amounts the Pool will receive in return.
      *
-     * Minted BPT will be sent to `recipient`, except for _getMinimumBpt(), which will be deducted from this amount and
-     * sent to the zero address instead. This will cause that BPT to remain forever locked there, preventing total BTP
-     * from ever dropping below that value, and ensuring `_onInitializePool` can only be called once in the entire
-     * Pool's lifetime. The default value of _getMinimumBpt ie 1e6
+     * All minted BPT will be sent to `recipient`, except for _getMinimumBpt(), which will be deducted from this amount
+     * and sent to the zero address instead. This will cause that BPT to remain forever locked there, preventing total
+     * BTP from ever dropping below that value, and ensuring `_onInitializePool` can only be called once in the entire
+     * Pool's lifetime. The default value of _getMinimumBpt() ie 1e6
      *
-     * The tokens granted to the Pool will be transferred from `sender`. These amounts are considered upscaled and will
-     * be downscaled (rounding up) before being returned to the Vault.
+     * The tokens granted to the Pool (amountsIn) will be transferred from `sender`. These amounts must be upscaled
+     * and will be downscaled (rounding up) before being returned to the Vault.
      */
     function _onInitializePool(
         bytes32,
