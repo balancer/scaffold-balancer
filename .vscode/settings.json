@@ -52,7 +52,6 @@
   "eslint.workingDirectories": [
     { "directory": "packages/*", "changeProcessCWD": true },
     { "directory": "packages/solidity-ts", "changeProcessCWD": true },
-    { "directory": "packages/vite-app-ts", "changeProcessCWD": true },
     { "directory": "packages/nextjs-app-ts", "changeProcessCWD": true },
     { "directory": "packages/common", "changeProcessCWD": true },
     { "directory": "packages/subgraph", "changeProcessCWD": true },

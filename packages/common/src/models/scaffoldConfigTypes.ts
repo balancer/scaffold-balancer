@@ -26,5 +26,5 @@ export type TNetworkNames = {
 export const solidityToolkits = ['hardhat', 'foundry'] as const;
 export type TSolidityToolkits = typeof solidityToolkits[number];
 
-export const reactBuilds = ['vite', 'nextjs'] as const;
+export const reactBuilds = ['nextjs'] as const;
 export type TReactBuilds = typeof reactBuilds[number];

@@ -4,7 +4,7 @@
 
 This is the typescript repo of scaffold-eth. Use scaffold-eth-typescript with:
 
-- A react frontend running with `nextjs` or `vite`.
+- A react frontend running with `nextjs`.
 - Solidity toolkit of `hardhat` or `foundry`
 - It has the a command line system that allows you to choose a **react frontend** or **solidity toolkit**
 
@@ -48,7 +48,7 @@ Running the app
    yarn compile
    # deploy your hardhat contracts
    yarn deploy
-   # start the react app (vite)
+   # start the react app (nextjs)
    yarn start
    ```
 
@@ -69,7 +69,7 @@ use `-h` with any command for help.  e.g. yarn set-react -h
 You can change the configuration file to pick different frontends and solidity toolkits.
 
 ```bash
-yarn set-react `nextjs` or `vite`
+yarn set-react `nextjs`
 yarn set-solidity `hardhat` or `foundry`
 ```
 
@@ -127,8 +127,7 @@ The directories that you'll use are:
 ```bash
 packages/solidity-ts/
 
-And one of either:
-packages/vite-app-ts/
+And:
 packages/next-app-ts/
 ```
 
@@ -163,7 +162,7 @@ Everything you need to build on Ethereum! 🚀 Quickly experiment with Solidity 
 ![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
 
 - 🔏 Edit your smart contract `YourContract.sol` in `packages/solidity-ts/contracts`
-- 📝 Edit your frontend `MainPage.tsx` in `packages/vite-app-ts/src`
+- 📝 Edit your frontend `MainPage.tsx` in `packages/nextjs-app-ts/src`
 - 💼 Edit your deployment scripts in `packages/solidity-ts/deploy/hardhat-deploy`
 - 📱 Open http://localhost:3000 to see the app
 - 👷🏽‍♂️ run `yarn hardhat` to get a list of all the tasks. Run `yarn hardhat taskname` to run the task.

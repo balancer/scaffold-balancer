@@ -25,14 +25,14 @@ program
   .command('reset-config')
   .description('Create scaffold.config.json')
   .action(() => {
-    createConfig(...parseCreateConfigArgs('hardhat', 'vite', 'localhost', 'localhost'));
+    createConfig(...parseCreateConfigArgs('hardhat', 'nextjs', 'localhost', 'localhost'));
   });
 
 program
   .command('set-config')
   .description('Set scaffold.config.json file')
   .argument('<solidity>', ':  Solidity tooklit:  use `hardhat` or `foundry`')
-  .argument('<react>', 'React frontend: use nextjs or vite for your frontend')
+  .argument('<react>', 'React frontend: use nextjs for your frontend')
   .argument('<targetNetwork>', ':  An network your toolkit should target.  (e.g. `localhost` or "localhost, mainnet")')
   .argument('<availableNetworks>', ':  An array of networks to target. (e.g. `localhost` or "localhost, mainnet")')
   .action((...args: string[]) => {
@@ -42,7 +42,7 @@ program
 program
   .command('set-react')
   .description('Set the react build tool')
-  .argument('[react build tool]', 'Use nextjs or vite for your frontend', 'vite')
+  .argument('[react build tool]', 'Use nextjs for your frontend', 'react')
   .action((...args: string[]) => {
     setConfig(...parseReactBuild(...args));
   });

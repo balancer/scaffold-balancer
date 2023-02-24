@@ -2,7 +2,7 @@
   "name": "@scaffold-eth/common",
   "version": "0.0.0",
   "author": "Shravan Sunder<shravan.sunder.dev@gmail.com>",
-  "description": "Common package to be used by solidity-ts and vite-app-ts in the scaffold-eth-typescript workspace",
+  "description": "Common package to be used by solidity-ts and nextjs-app-ts in the scaffold-eth-typescript workspace",
   "license": "MIT",
   "private": true,
   "main": "./src/index.ts",

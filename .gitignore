@@ -7,7 +7,6 @@
 *.stackdump
 .yalc
 yalc.lock
-packages/vite-app-ts/dist
 packages/**/data
 build
 dist
