@@ -11,6 +11,10 @@ if (typeof window !== 'undefined' && window != null) {
 
 export type TNetworkDefinition = TNetworkInfo & {
   color: string;
+  balancer?: {
+    subgraphUrl: string;
+    sorQueriesAddress: string;
+  };
 };
 
 export const networkDefinitions: Record<TNetworkNamesList, TNetworkDefinition> = {
@@ -27,6 +31,11 @@ export const networkDefinitions: Record<TNetworkNamesList, TNetworkDefinition> =
     chainId: 1,
     rpcUrl: `https://mainnet.infura.io/v3/${INFURA_ID}`,
     blockExplorer: 'https://etherscan.io/',
+    balancer: {
+      subgraphUrl: 'https://balancer-v2-analytics.stellate.sh/',
+      // subgraphUrl: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+      sorQueriesAddress: '0x6732d651EeA0bc98FcF4EFF8B62e0CdCB0064f4b',
+    },
   },
   kovan: {
     name: 'kovan',

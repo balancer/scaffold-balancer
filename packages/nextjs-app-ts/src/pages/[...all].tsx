@@ -21,11 +21,11 @@ const Page: FC<TPageProps> = (props) => {
   return (
     <div className="App">
       <Head>
-        <title>Scaffold-eth-typescript</title>
+        <title>Scaffold-Balancer</title>
         <meta name="description" content="Generated from Scaffold-eth-typescript" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainPage pageName={urlPath} {...props}></MainPage>;
+      <MainPage pageName={urlPath} {...props}></MainPage>
     </div>
   );
 };

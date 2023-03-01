@@ -26,8 +26,6 @@ const cache = createCache({ key: 'next' });
  * You don't need to change this file!!
  */
 
-console.log('init app...');
-
 // load saved theme
 const savedTheme = 'light';
 
@@ -68,7 +66,8 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppProps> = ({ Compo
   console.log('loading app...');
   const [queryClient] = useState(() => new QueryClient());
 
-  const dehydradedState = props.pageProps.dehydratedState as unknown;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const dehydradedState = (props.pageProps as any).dehydratedState as unknown;
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>

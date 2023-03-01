@@ -5,8 +5,6 @@
 #build
 *.tsbuildinfo
 *.stackdump
-.yalc
-yalc.lock
 packages/**/data
 build
 dist

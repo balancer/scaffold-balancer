@@ -114,5 +114,8 @@
   },
   "volta": {
     "node": "16.15.0"
+  },
+  "dependencies": {
+    "graphql": "^16.6.0"
   }
 }

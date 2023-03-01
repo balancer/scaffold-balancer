@@ -15,6 +15,7 @@ import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldApp
 import { networkDefinitions } from '~common/constants';
 import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
 import { PoolContractList } from '~~/components/pool/PoolContractList';
+import { SorPage } from '~~/components/sor/SorPage';
 import {
   AVAILABLE_NETWORKS_DEFINITIONS,
   CONNECT_TO_BURNER_AUTOMATICALLY,
@@ -133,6 +134,11 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
     },
     pages: [
       {
+        name: 'SmartOrderRouter',
+        title: 'Smart Order Router (SOR)',
+        content: <SorPage />,
+      },
+      {
         name: 'BalancerQueries',
         title: 'Balancer Queries',
         content: (
@@ -141,18 +147,6 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
             contract={yourNFT}
             mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
             blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}></GenericContract>
-        ),
-      },
-      {
-        name: 'SmartOrderRouter',
-        title: 'Smart Order Router (SOR)',
-        content: (
-          <GenericContract
-            contractName="Dai"
-            contract={mainnetDai}
-            mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-            blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}
-          />
         ),
       },
     ],

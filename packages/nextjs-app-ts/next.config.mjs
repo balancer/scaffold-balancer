@@ -4,7 +4,7 @@ const __dirname = resolve();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: { esmExternals: true, externalDir: true, swcFileReading: true },
+  experimental: { esmExternals: true, externalDir: true, swcFileReading: true, topLevelAwait: true },
 
   // https://github.com/vercel/next.js/issues/36221
   //swcMinify: true,

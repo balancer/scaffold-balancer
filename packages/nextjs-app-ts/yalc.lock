@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "@balancer/sdk": {
+      "signature": "79749417019e4c93b8d525ffae2947a6",
+      "file": true
+    }
+  }
+}
