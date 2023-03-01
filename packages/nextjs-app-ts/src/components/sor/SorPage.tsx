@@ -159,13 +159,7 @@ export function SorPage() {
         Path graph
       </Title>
       <SorNetworkGraph
-        tokens={tokens.filter((token) => {
-          if (selectedTokens.length > 0 && !selectedTokens.includes(token.address)) {
-            return false;
-          }
-
-          return true;
-        })}
+        tokens={tokens}
         pools={pools.filter((pool) => {
           if (selectedPoolTypes.length > 0 && !selectedPoolTypes.includes(pool.poolType)) {
             return false;
