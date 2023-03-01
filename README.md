@@ -34,10 +34,10 @@ Running the app
    yarn create-config
    ```
 
-3. start a local hardhat node (chain)
+3. start a local hardhat fork of mainnet (chain)
 
    ```bash
-   yarn chain
+   yarn fork
    ```
 
 4. Run the app, `open a new command prompt terminal`
@@ -49,7 +49,7 @@ Running the app
    # deploy your hardhat contracts
    yarn deploy
    # start the react app (nextjs)
-   yarn start
+   yarn dev
    ```
 
 5. Open http://localhost:3000 to see your front end
