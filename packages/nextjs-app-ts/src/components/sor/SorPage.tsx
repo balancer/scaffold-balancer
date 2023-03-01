@@ -2,14 +2,14 @@ import { SettingOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Empty, Input, Row, Select, Space, Typography } from 'antd';
 import React, { useState } from 'react';
 
+import { usePoolsData } from '~~/components/hooks/usePoolsData';
 import { SorConfigModal } from '~~/components/sor/components/SorConfigModal';
 import { SorNetworkGraph } from '~~/components/sor/components/SorNetworkGraph';
-import { useSorPoolData } from '~~/components/sor/hooks/useSorPoolData';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
 export function SorPage() {
-  const { pools, poolTypes, tokens } = useSorPoolData();
+  const { pools, poolTypes, tokens } = usePoolsData();
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const tokenOptions = tokens.map((token) => ({ label: `${token.symbol} - ${token.address}`, value: token.address }));
   const [selectedPoolTypes, setSelectedPoolTypes] = useState<string[]>([]);

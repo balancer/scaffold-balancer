@@ -8,7 +8,7 @@ type GetPoolsResponseExtended = Omit<GetPoolsResponse, 'pools'> & {
   pools: (RawPool & { name: string; symbol: string })[];
 };
 
-export function useSorPoolData() {
+export function usePoolsData() {
   const forkedChainId = 1; // TODO: this should be inferred based on the network forked
   const forkedNetworkInfo = getNetworkInfo(forkedChainId);
 

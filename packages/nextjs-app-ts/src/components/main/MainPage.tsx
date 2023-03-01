@@ -1,4 +1,3 @@
-import { GenericContract } from 'eth-components/ant/generic-contract';
 import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners, useEventListener } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
@@ -13,6 +12,7 @@ import { useCreateAntNotificationHolder } from '~common/components/hooks/useAntN
 import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
 import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
 import { networkDefinitions } from '~common/constants';
+import { BatchSwapPage } from '~~/components/batchswap/BatchSwapPage';
 import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
 import { PoolContractList } from '~~/components/pool/PoolContractList';
 import { SorPage } from '~~/components/sor/SorPage';
@@ -139,15 +139,9 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
         content: <SorPage />,
       },
       {
-        name: 'BalancerQueries',
-        title: 'Balancer Queries',
-        content: (
-          <GenericContract
-            contractName="YourNFT"
-            contract={yourNFT}
-            mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-            blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}></GenericContract>
-        ),
+        name: 'BatchSwap',
+        title: 'Batch Swap',
+        content: <BatchSwapPage />,
       },
     ],
   };
