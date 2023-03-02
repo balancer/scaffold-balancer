@@ -12,10 +12,6 @@ import { useCreateAntNotificationHolder } from '~common/components/hooks/useAntN
 import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
 import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
 import { networkDefinitions } from '~common/constants';
-import { BatchSwapPage } from '~~/components/batchswap/BatchSwapPage';
-import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
-import { PoolContractList } from '~~/components/pool/PoolContractList';
-import { SorPage } from '~~/components/sor/SorPage';
 import {
   AVAILABLE_NETWORKS_DEFINITIONS,
   CONNECT_TO_BURNER_AUTOMATICALLY,
@@ -24,7 +20,11 @@ import {
   INFURA_ID,
   BURNER_FALLBACK_ENABLED,
 } from '~~/config/nextjsApp.config';
+import { useScaffoldHooksExamples } from '~~/hooks/useScaffoldHooksExamples';
 import { TAppProps } from '~~/models/TAppProps';
+import { BatchSwapPage } from '~~/modules/batchswap/BatchSwapPage';
+import { PoolContractList } from '~~/modules/pool/PoolContractList';
+import { SorPage } from '~~/modules/sor/SorPage';
 
 /** ********************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️

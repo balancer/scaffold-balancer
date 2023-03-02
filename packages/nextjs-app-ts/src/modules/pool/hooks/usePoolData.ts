@@ -6,8 +6,8 @@ import { useQuery, UseQueryResult } from 'react-query';
 import { useAppContracts } from '~common/components/context';
 import { networkDefinitions } from '~common/constants';
 import { ERC20__factory } from '~common/generated/contract-types';
-import { BasePoolAbi } from '~~/components/pool/abi/BasePoolAbi';
-import { PoolToken } from '~~/components/pool/pool-types';
+import { BasePoolAbi } from '~~/modules/pool/abi/BasePoolAbi';
+import { PoolToken } from '~~/modules/pool/pool-types';
 
 interface QueryResponse {
   address: string;

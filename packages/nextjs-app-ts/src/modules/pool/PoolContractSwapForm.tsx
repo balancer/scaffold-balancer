@@ -7,10 +7,10 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { FC, useContext, useState } from 'react';
 
 import { useAppContracts } from '~common/components/context';
-import { useBalancerQueries } from '~~/components/pool/hooks/useBalancerQueries';
-import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
-import { PoolToken } from '~~/components/pool/pool-types';
 import { MaxUint256 } from '~~/helpers/constants';
+import { useBalancerQueries } from '~~/modules/pool/hooks/useBalancerQueries';
+import { useTxGasPrice } from '~~/modules/pool/hooks/useTxGasPrice';
+import { PoolToken } from '~~/modules/pool/pool-types';
 
 interface Props {
   poolTokens: PoolToken[];

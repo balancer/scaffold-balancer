@@ -4,7 +4,7 @@ import { formatUnits } from 'ethers/lib/utils';
 import { useQuery } from 'react-query';
 
 import { ERC20__factory } from '~common/generated/contract-types';
-import { PoolToken, PoolTokenWithUserBalance } from '~~/components/pool/pool-types';
+import { PoolToken, PoolTokenWithUserBalance } from '~~/modules/pool/pool-types';
 
 export function useTokenBalances(poolTokens: PoolToken[]) {
   const { provider, account } = useEthersAppContext();

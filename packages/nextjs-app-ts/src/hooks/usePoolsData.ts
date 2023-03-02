@@ -4,8 +4,10 @@ import { useQuery } from 'react-query';
 
 import { getNetworkInfo } from '~common/functions';
 
+export type RawPoolExtended = RawPool & { name: string; symbol: string };
+
 type GetPoolsResponseExtended = Omit<GetPoolsResponse, 'pools'> & {
-  pools: (RawPool & { name: string; symbol: string })[];
+  pools: RawPoolExtended[];
 };
 
 export function usePoolsData() {

@@ -2,7 +2,7 @@ import { Button, Input } from 'antd';
 import { isAddress } from 'ethers/lib/utils';
 import React, { useState } from 'react';
 
-import { PoolContract } from '~~/components/pool/PoolContract';
+import { PoolContract } from '~~/modules/pool/PoolContract';
 
 export function PoolContractList() {
   const [inputText, setInputText] = useState<string>('');

@@ -2,9 +2,9 @@ import { SettingOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Empty, Input, Row, Select, Space, Typography } from 'antd';
 import React, { useState } from 'react';
 
-import { usePoolsData } from '~~/components/hooks/usePoolsData';
-import { SorConfigModal } from '~~/components/sor/components/SorConfigModal';
-import { SorNetworkGraph } from '~~/components/sor/components/SorNetworkGraph';
+import { usePoolsData } from '~~/hooks/usePoolsData';
+import { SorConfigModal } from '~~/modules/sor/components/SorConfigModal';
+import { SorNetworkGraph } from '~~/modules/sor/components/SorNetworkGraph';
 
 const { Title, Paragraph, Text, Link } = Typography;
 

@@ -6,9 +6,9 @@ import { Interface, parseUnits } from 'ethers/lib/utils';
 import React, { FC, useContext, useState } from 'react';
 
 import { ERC20__factory } from '~common/generated/contract-types';
-import { useTokenBalances } from '~~/components/pool/hooks/useTokenBalances';
-import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
-import { PoolToken } from '~~/components/pool/pool-types';
+import { useTokenBalances } from '~~/modules/pool/hooks/useTokenBalances';
+import { useTxGasPrice } from '~~/modules/pool/hooks/useTxGasPrice';
+import { PoolToken } from '~~/modules/pool/pool-types';
 
 interface Props {
   poolTokens: PoolToken[];

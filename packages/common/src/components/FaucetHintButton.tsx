@@ -9,7 +9,7 @@ import { utils } from 'ethers';
 import React, { FC, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { useTxGasPrice } from '../../../nextjs-app-ts/src/components/pool/hooks/useTxGasPrice';
+import { useTxGasPrice } from '../../../nextjs-app-ts/src/modules/pool/hooks/useTxGasPrice';
 
 import { IScaffoldAppProviders } from '~common/models/IScaffoldAppProviders';
 

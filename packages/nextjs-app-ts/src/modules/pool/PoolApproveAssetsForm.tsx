@@ -7,10 +7,10 @@ import React, { FC, useContext } from 'react';
 
 import { useAppContracts } from '~common/components/context';
 import { ERC20__factory } from '~common/generated/contract-types';
-import { useTokenApprovals } from '~~/components/pool/hooks/useTokenApprovals';
-import { useTxGasPrice } from '~~/components/pool/hooks/useTxGasPrice';
-import { PoolToken } from '~~/components/pool/pool-types';
 import { MaxUint256 } from '~~/helpers/constants';
+import { useTokenApprovals } from '~~/modules/pool/hooks/useTokenApprovals';
+import { useTxGasPrice } from '~~/modules/pool/hooks/useTxGasPrice';
+import { PoolToken } from '~~/modules/pool/pool-types';
 
 interface Props {
   poolTokens: PoolToken[];

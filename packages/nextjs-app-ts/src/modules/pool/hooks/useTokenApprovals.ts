@@ -5,7 +5,7 @@ import { useQuery } from 'react-query';
 
 import { useAppContracts } from '~common/components/context';
 import { ERC20__factory } from '~common/generated/contract-types';
-import { PoolToken } from '~~/components/pool/pool-types';
+import { PoolToken } from '~~/modules/pool/pool-types';
 
 export function useTokenApprovals(poolTokens: PoolToken[]) {
   const { provider, account, chainId } = useEthersAppContext();

@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import React, { FC } from 'react';
 
-import { MainPage } from '~~/components/main/MainPage';
 import { TPageProps } from '~~/models/TAppProps';
+import { MainPage } from '~~/modules/main/MainPage';
 
 const Page: FC<TPageProps> = (props) => {
   return (

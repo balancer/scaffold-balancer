@@ -2,13 +2,13 @@ import { Card, Col, Divider, Row } from 'antd';
 import { Address } from 'eth-components/ant';
 import { FC } from 'react';
 
-import { usePoolData } from '~~/components/pool/hooks/usePoolData';
-import { useTokenBalances } from '~~/components/pool/hooks/useTokenBalances';
-import { PoolApproveAssetsForm } from '~~/components/pool/PoolApproveAssetsForm';
-import { PoolContractExitForm } from '~~/components/pool/PoolContractExitForm';
-import { PoolContractGetAssetsForm } from '~~/components/pool/PoolContractGetAssetsForm';
-import { PoolContractJoinForm } from '~~/components/pool/PoolContractJoinForm';
-import { PoolContractSwapForm } from '~~/components/pool/PoolContractSwapForm';
+import { usePoolData } from '~~/modules/pool/hooks/usePoolData';
+import { useTokenBalances } from '~~/modules/pool/hooks/useTokenBalances';
+import { PoolApproveAssetsForm } from '~~/modules/pool/PoolApproveAssetsForm';
+import { PoolContractExitForm } from '~~/modules/pool/PoolContractExitForm';
+import { PoolContractGetAssetsForm } from '~~/modules/pool/PoolContractGetAssetsForm';
+import { PoolContractJoinForm } from '~~/modules/pool/PoolContractJoinForm';
+import { PoolContractSwapForm } from '~~/modules/pool/PoolContractSwapForm';
 
 interface Props {
   address: string;
