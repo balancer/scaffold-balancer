@@ -44,6 +44,8 @@ export function BatchSwapPath({
   deletePath,
 }: Props) {
   const tokenOptions = tokens.map((token) => ({ label: `${token.symbol} - ${token.address}`, value: token.address }));
+  let currentStep = hops.findIndex((hop) => !hop.poolId || !hop.tokenOut);
+  currentStep = currentStep === -1 ? hops.length : currentStep;
 
   return (
     <Card
@@ -55,7 +57,7 @@ export function BatchSwapPath({
           )}
         </Space>
       }>
-      <Steps direction="vertical">
+      <Steps direction="vertical" current={currentStep}>
         {hops.map((hop, hopIdx) => (
           <Steps.Step
             key={hopIdx}
@@ -123,7 +125,8 @@ export function BatchSwapPath({
           style={{ marginTop: 4, marginBottom: 20 }}
           icon={<PlusCircleOutlined />}
           type="primary"
-          onClick={addHop}>
+          onClick={addHop}
+          disabled={currentStep !== hops.length}>
           Add hop
         </Button>
       </div>
