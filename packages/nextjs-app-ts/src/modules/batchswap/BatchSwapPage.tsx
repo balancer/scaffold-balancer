@@ -16,20 +16,9 @@ interface Path {
 }
 
 export function BatchSwapPage() {
-  const { pools, poolTypes, tokens } = usePoolsData();
-  const [configModalOpen, setConfigModalOpen] = useState(false);
-  const tokenOptions = tokens.map((token) => ({ label: `${token.symbol} - ${token.address}`, value: token.address }));
-  const [selectedPoolTypes, setSelectedPoolTypes] = useState<string[]>([]);
-  const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
-  const [selectedPools, setSelectedPools] = useState<string[]>([]);
-  const [tokenIn, setTokenIn] = useState<string | null>(null);
-  const [tokenOut, setTokenOut] = useState<string | null>(null);
+  const { pools, tokens } = usePoolsData();
   const [swapType, setSwapType] = useState<'GIVEN_IN' | 'GIVEN_OUT' | null>(null);
-  const [amount, setAmount] = useState<string>('');
-  const [paths, setPaths] = useState<Path[]>([
-    { tokenIn: null, hops: [{ poolId: null, tokenOut: null }], amount: '' },
-    { tokenIn: null, hops: [{ poolId: null, tokenOut: null }], amount: '' },
-  ]);
+  const [paths, setPaths] = useState<Path[]>([{ tokenIn: null, hops: [], amount: '' }]);
 
   return (
     <div style={{ marginTop: 24, marginLeft: 18, marginRight: 18, paddingBottom: 120 }}>
@@ -78,14 +67,35 @@ export function BatchSwapPage() {
                 amount={path.amount}
                 hops={path.hops}
                 setTokenIn={(tokenIn) => {
+                  if (!paths[pathIdx].tokenIn && tokenIn && paths[pathIdx].hops.length === 0) {
+                    paths[pathIdx].hops.push({ poolId: null, tokenOut: null });
+                  } else if (!tokenIn && paths[pathIdx].hops.length > 0) {
+                    paths[pathIdx].hops = [];
+                  } else if (tokenIn !== paths[pathIdx].tokenIn && paths[pathIdx].hops.length > 0) {
+                    paths[pathIdx].hops = [{ poolId: null, tokenOut: null }];
+                  }
+
                   paths[pathIdx].tokenIn = tokenIn;
                   setPaths([...paths]);
                 }}
                 setHopPoolId={(hopIdx, poolId) => {
+                  if (poolId === null || paths[pathIdx].hops[hopIdx].poolId !== poolId) {
+                    paths[pathIdx].hops[hopIdx].tokenOut = null;
+                    paths[pathIdx].hops = paths[pathIdx].hops.slice(0, hopIdx + 1);
+                  }
+
                   paths[pathIdx].hops[hopIdx].poolId = poolId;
                   setPaths([...paths]);
                 }}
                 setHopTokenOut={(hopIdx, tokenOut) => {
+                  if (tokenOut === null || paths[pathIdx].hops[hopIdx].tokenOut !== tokenOut) {
+                    paths[pathIdx].hops = paths[pathIdx].hops.slice(0, hopIdx + 1);
+
+                    if (tokenOut !== null) {
+                      paths[pathIdx].hops.push({ poolId: null, tokenOut: null });
+                    }
+                  }
+
                   paths[pathIdx].hops[hopIdx].tokenOut = tokenOut;
                   setPaths([...paths]);
                 }}
@@ -102,7 +112,7 @@ export function BatchSwapPage() {
                   setPaths([...paths]);
                 }}
                 deletePath={
-                  pathIdx === paths.length - 1
+                  paths.length > 1 && pathIdx === paths.length - 1
                     ? () => {
                         setPaths(paths.slice(0, paths.length - 1));
                       }
@@ -116,7 +126,7 @@ export function BatchSwapPage() {
             <Button
               type="primary"
               onClick={() => {
-                setPaths([...paths, { hops: [{ poolId: null, tokenOut: null }], amount: '', tokenIn: null }]);
+                setPaths([...paths, { hops: [], amount: '', tokenIn: null }]);
               }}>
               Add path
             </Button>

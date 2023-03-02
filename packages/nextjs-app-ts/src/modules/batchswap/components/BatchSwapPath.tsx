@@ -1,6 +1,6 @@
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { RawPoolToken } from '@balancer/sdk';
-import { Button, Card, Col, Input, Row, Select, Space, Steps, Typography } from 'antd';
+import { Button, Card, Input, Select, Space, Steps, Typography } from 'antd';
 import React from 'react';
 
 import { RawPoolExtended } from '~~/hooks/usePoolsData';
@@ -57,67 +57,73 @@ export function BatchSwapPath({
           )}
         </Space>
       }>
+      <div style={{ marginBottom: 16 }}>
+        <Text strong>Token in</Text>
+        <Select
+          showSearch
+          allowClear
+          style={{ width: '100%' }}
+          placeholder="Token in"
+          onChange={setTokenIn}
+          value={tokenIn}
+          options={tokenOptions}
+          showArrow={true}
+          optionFilterProp="label"
+        />
+      </div>
       <Steps direction="vertical" current={currentStep}>
-        {hops.map((hop, hopIdx) => (
-          <Steps.Step
-            key={hopIdx}
-            title={
-              <Space direction="horizontal">
-                <div>Hop {hopIdx + 1}</div>
-                {hopIdx === hops.length - 1 && hops.length > 1 && (
-                  <Button icon={<DeleteOutlined />} danger type="text" onClick={removeLastHop} />
-                )}
-              </Space>
-            }
-            description={
-              <Space direction="vertical" style={{ width: '100%' }}>
-                <div>
-                  <Select
-                    showSearch
-                    allowClear
-                    style={{ width: '100%' }}
-                    placeholder="Pool"
-                    onChange={(value) => setHopPoolId(hopIdx, value)}
-                    options={pools.map((pool) => ({ label: `${pool.symbol} - ${pool.id}`, value: pool.id }))}
-                    showArrow={true}
-                    value={hop.poolId}
-                    optionFilterProp="label"
-                  />
-                </div>
-                <Row gutter={8}>
-                  {hopIdx === 0 && (
-                    <Col span={12}>
-                      <Select
-                        showSearch
-                        allowClear
-                        style={{ width: '100%' }}
-                        placeholder="Token in"
-                        onChange={setTokenIn}
-                        value={tokenIn}
-                        options={tokenOptions}
-                        showArrow={true}
-                        optionFilterProp="label"
-                      />
-                    </Col>
+        {hops.map((hop, hopIdx) => {
+          const hopTokenIn = hopIdx === 0 ? tokenIn : hops[hopIdx - 1].tokenOut;
+          const hopPools = hopTokenIn ? pools.filter((pool) => pool.tokensList.includes(hopTokenIn)) : [];
+          const selectedPool = hop.poolId ? pools.find((pool) => pool.id === hop.poolId) : undefined;
+          const hopTokensOut = selectedPool ? selectedPool.tokens.filter((token) => token.address !== hopTokenIn) : [];
+
+          return (
+            <Steps.Step
+              key={hopIdx}
+              title={
+                <Space direction="horizontal">
+                  <div>Hop {hopIdx + 1}</div>
+                  {hopIdx === hops.length - 1 && hops.length > 1 && (
+                    <Button icon={<DeleteOutlined />} danger type="text" onClick={removeLastHop} />
                   )}
-                  <Col span={hopIdx === 0 ? 12 : 24}>
+                </Space>
+              }
+              description={
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <div>
                     <Select
                       showSearch
                       allowClear
                       style={{ width: '100%' }}
-                      placeholder="Token out"
-                      onChange={(value) => setHopTokenOut(hopIdx, value)}
-                      value={hop.tokenOut}
-                      options={tokenOptions}
+                      placeholder="Pool"
+                      onChange={(value) => setHopPoolId(hopIdx, value)}
+                      options={hopPools.map((pool) => ({ label: `${pool.symbol} - ${pool.id}`, value: pool.id }))}
                       showArrow={true}
+                      value={hop.poolId}
                       optionFilterProp="label"
                     />
-                  </Col>
-                </Row>
-              </Space>
-            }
-          />
-        ))}
+                  </div>
+                  <Select
+                    showSearch
+                    allowClear
+                    style={{ width: '100%' }}
+                    placeholder="Token out"
+                    onChange={(value) => setHopTokenOut(hopIdx, value)}
+                    value={hop.tokenOut}
+                    options={hopTokensOut.map((token) => ({
+                      label: `${token.symbol} - ${token.address}`,
+                      value: token.address,
+                    }))}
+                    showArrow={true}
+                    optionFilterProp="label"
+                    disabled={hop.poolId === null}
+                  />
+                </Space>
+              }
+            />
+          );
+        })}
       </Steps>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -126,7 +132,7 @@ export function BatchSwapPath({
           icon={<PlusCircleOutlined />}
           type="primary"
           onClick={addHop}
-          disabled={currentStep !== hops.length}>
+          disabled={!tokenIn || currentStep !== hops.length}>
           Add hop
         </Button>
       </div>
