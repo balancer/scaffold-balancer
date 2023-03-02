@@ -64,7 +64,7 @@ export function BatchSwapPath({
           allowClear
           style={{ width: '100%' }}
           placeholder="Token in"
-          onChange={setTokenIn}
+          onChange={(value) => setTokenIn(value || null)}
           value={tokenIn}
           options={tokenOptions}
           showArrow={true}
@@ -97,7 +97,7 @@ export function BatchSwapPath({
                       allowClear
                       style={{ width: '100%' }}
                       placeholder="Pool"
-                      onChange={(value) => setHopPoolId(hopIdx, value)}
+                      onChange={(value) => setHopPoolId(hopIdx, value || null)}
                       options={hopPools.map((pool) => ({ label: `${pool.symbol} - ${pool.id}`, value: pool.id }))}
                       showArrow={true}
                       value={hop.poolId}
@@ -109,7 +109,7 @@ export function BatchSwapPath({
                     allowClear
                     style={{ width: '100%' }}
                     placeholder="Token out"
-                    onChange={(value) => setHopTokenOut(hopIdx, value)}
+                    onChange={(value) => setHopTokenOut(hopIdx, value || null)}
                     value={hop.tokenOut}
                     options={hopTokensOut.map((token) => ({
                       label: `${token.symbol} - ${token.address}`,

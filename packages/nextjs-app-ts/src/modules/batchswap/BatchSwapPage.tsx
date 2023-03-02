@@ -88,12 +88,16 @@ export function BatchSwapPage() {
                   setPaths([...paths]);
                 }}
                 setHopTokenOut={(hopIdx, tokenOut) => {
-                  if (tokenOut === null || paths[pathIdx].hops[hopIdx].tokenOut !== tokenOut) {
+                  if (tokenOut === null) {
                     paths[pathIdx].hops = paths[pathIdx].hops.slice(0, hopIdx + 1);
-
-                    if (tokenOut !== null) {
-                      paths[pathIdx].hops.push({ poolId: null, tokenOut: null });
-                    }
+                  } else if (
+                    paths[pathIdx].hops[hopIdx].tokenOut !== null &&
+                    paths[pathIdx].hops[hopIdx].tokenOut !== tokenOut
+                  ) {
+                    paths[pathIdx].hops = [
+                      ...paths[pathIdx].hops.slice(0, hopIdx + 1),
+                      { poolId: null, tokenOut: null },
+                    ];
                   }
 
                   paths[pathIdx].hops[hopIdx].tokenOut = tokenOut;
