@@ -10,11 +10,11 @@ const { Title, Paragraph, Text } = Typography;
 
 export function BatchSwapPage() {
   const { pools, tokens } = usePoolsData();
-  const [swapType, setSwapType] = useState<BatchSwapType | null>(null);
+  const [swapType, setSwapType] = useState<BatchSwapType>('GIVEN_IN');
   const [paths, setPaths] = useState<BatchSwapPathData[]>([{ tokenIn: null, hops: [], amount: '' }]);
 
   return (
-    <div style={{ marginTop: 24, marginLeft: 18, marginRight: 18, paddingBottom: 120 }}>
+    <div style={{ marginTop: 24, marginLeft: 18, marginRight: 18, paddingBottom: 200 }}>
       <Typography>
         <Title level={2}>Batch Swap</Title>
         <Paragraph>

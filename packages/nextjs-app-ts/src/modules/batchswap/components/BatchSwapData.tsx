@@ -1,26 +1,27 @@
 import { BatchSwapStep, RawPoolToken, ZERO_ADDRESS } from '@balancer/sdk';
 import { parseUnits } from '@ethersproject/units';
-import { Button, Card, Checkbox, Col, Input, Row, Space, Typography } from 'antd';
+import { Alert, Button, Card, Checkbox, Col, Input, Row, Space, Typography } from 'antd';
 import { useEthersAppContext } from 'eth-hooks/context';
+import { BigNumber } from 'ethers';
 import { uniq } from 'lodash';
 import React, { useState } from 'react';
 
-import { useAppContracts } from '~common/components/context';
-import { networkDefinitions } from '~common/constants';
 import { MaxUint256 } from '~~/helpers/constants';
+import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
+import { useVault } from '~~/hooks/useVault';
 import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
+import { BatchSwapTokenApprovals } from '~~/modules/batchswap/components/BatchSwapTokenApprovals';
 
 const { Text } = Typography;
 
 interface Props {
   swapType: BatchSwapType;
   paths: BatchSwapPathData[];
-
   tokens: RawPoolToken[];
 }
 
 export function BatchSwapData({ tokens, swapType, paths }: Props) {
-  const vault = useAppContracts('Vault', networkDefinitions.localhost.chainId);
+  const vault = useVault();
   const isGivenIn = swapType === 'GIVEN_IN';
   const { account } = useEthersAppContext();
   const [activeDataTab, setActiveDataTab] = useState<string>('data');
@@ -28,6 +29,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
   const [recipient, setRecipient] = useState(account || ZERO_ADDRESS);
   const [fromInternalBalance, setFromInternalBalance] = useState(false);
   const [toInternalBalance, setToInternalBalance] = useState(false);
+  const [assetDeltas, setAssetDeltas] = useState<string[]>([]);
   const [deadline, setDeadline] = useState('');
   const [slippage, setSlippage] = useState('0.25');
   const isPathInputValid =
@@ -42,6 +44,10 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
   const assets = isPathInputValid
     ? uniq(paths.map((path) => [path.tokenIn!, ...path.hops.map((hop) => hop.tokenOut!)]).flat())
     : [];
+  const tokensIn = isPathInputValid
+    ? uniq(paths.map((path) => path.tokenIn!)).map((asset) => tokens.find((token) => token.address === asset)!)
+    : [];
+  const { data: allowances, refetch: refetchTokenApprovals } = useTokenApprovals(tokensIn);
 
   const batchSwapSteps: BatchSwapStep[] = isPathInputValid
     ? paths
@@ -63,6 +69,17 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
         })
         .flat()
     : [];
+
+  const queryBatchSwap = async (): Promise<void> => {
+    const response: BigNumber[] = await vault.queryBatchSwap(isGivenIn ? 0 : 1, batchSwapSteps, assets, {
+      sender,
+      fromInternalBalance,
+      recipient,
+      toInternalBalance,
+    });
+
+    setAssetDeltas(response.map((item) => item.toString()));
+  };
 
   return (
     <div>
@@ -152,7 +169,13 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
                 rows={12}
                 readOnly={true}
                 value={JSON.stringify(
-                  { assets, steps: batchSwapSteps, limits: [], deadline: deadline || MaxUint256.toString() },
+                  {
+                    assets,
+                    steps: batchSwapSteps,
+                    limits: [],
+                    deadline: deadline || MaxUint256.toString(),
+                    funds: { sender, fromInternalBalance, recipient, toInternalBalance },
+                  },
                   null,
                   4
                 )}
@@ -179,7 +202,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
                   batchSwapSteps,
                   assets,
                   { sender, fromInternalBalance, recipient, toInternalBalance },
-                  ['TODO'], // TODO
+                  [],
                   deadline || MaxUint256.toString(),
                 ])}
               />
@@ -187,14 +210,30 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
           </Card>
         </Col>
       </Row>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
-        <Button style={{ marginRight: 8 }} onClick={() => {}}>
-          Query
-        </Button>
-        <Button type="primary" onClick={() => {}}>
-          Execute
-        </Button>
+      <div style={{ display: 'flex', marginTop: 12, marginBottom: 12 }}>
+        <div style={{ flex: 1 }}>
+          <BatchSwapTokenApprovals
+            tokensIn={tokensIn}
+            refetchAllowances={async () => {
+              await refetchTokenApprovals();
+            }}
+            allowances={allowances || []}
+          />
+        </div>
+        <Space direction="horizontal">
+          <Button
+            disabled={!isPathInputValid}
+            onClick={() => {
+              void queryBatchSwap();
+            }}>
+            Query
+          </Button>
+          <Button disabled={true} type="primary" onClick={() => {}}>
+            Execute
+          </Button>
+        </Space>
       </div>
+      {assetDeltas.length > 0 && <Alert message={assetDeltas.join(',')} type="success" />}
     </div>
   );
 }
