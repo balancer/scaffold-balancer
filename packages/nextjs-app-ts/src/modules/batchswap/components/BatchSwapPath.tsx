@@ -4,6 +4,7 @@ import { Button, Card, Input, Select, Space, Steps, Typography } from 'antd';
 import React from 'react';
 
 import { RawPoolExtended } from '~~/hooks/usePoolsData';
+import { BatchSwapType } from '~~/modules/batchswap/batchswap-types';
 
 const { Text } = Typography;
 
@@ -11,7 +12,7 @@ interface Props {
   pathIndex: number;
   pools: RawPoolExtended[];
   tokens: RawPoolToken[];
-  swapType: 'GIVEN_IN' | 'GIVEN_OUT';
+  swapType: BatchSwapType;
   tokenIn: string | null;
   amount: string;
   hops: {
@@ -46,6 +47,9 @@ export function BatchSwapPath({
   const tokenOptions = tokens.map((token) => ({ label: `${token.symbol} - ${token.address}`, value: token.address }));
   let currentStep = hops.findIndex((hop) => !hop.poolId || !hop.tokenOut);
   currentStep = currentStep === -1 ? hops.length : currentStep;
+  const decimals =
+    tokens.find((token) => (swapType === 'GIVEN_IN' ? token.address === tokenIn : token.address === hops[0]?.tokenOut))
+      ?.decimals || 18;
 
   return (
     <Card
@@ -140,8 +144,15 @@ export function BatchSwapPath({
         <Text strong>Amount {swapType === 'GIVEN_OUT' ? 'out' : 'in'}</Text>
         <Input
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder={`Amount ${swapType === 'GIVEN_OUT' ? 'out' : 'in'}`}
+          onChange={(e) => {
+            if (e.target.value) {
+              const parts = e.target.value.split('.');
+              setAmount(`${parts[0]}${parts.length > 1 ? `.${parts[1].slice(0, decimals)}` : ''}`);
+            } else {
+              setAmount(e.target.value);
+            }
+          }}
+          placeholder={`Amount human readable: 1 WETH = 1.0`}
           style={{ width: '100%' }}
           type="number"
         />

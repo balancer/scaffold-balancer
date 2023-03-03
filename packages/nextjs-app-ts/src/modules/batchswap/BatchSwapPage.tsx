@@ -2,23 +2,16 @@ import { Button, Divider, Select, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import { usePoolsData } from '~~/hooks/usePoolsData';
+import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
+import { BatchSwapData } from '~~/modules/batchswap/components/BatchSwapData';
 import { BatchSwapPath } from '~~/modules/batchswap/components/BatchSwapPath';
 
 const { Title, Paragraph, Text } = Typography;
 
-interface Path {
-  tokenIn: string | null;
-  hops: {
-    poolId: string | null;
-    tokenOut: string | null;
-  }[];
-  amount: string;
-}
-
 export function BatchSwapPage() {
   const { pools, tokens } = usePoolsData();
-  const [swapType, setSwapType] = useState<'GIVEN_IN' | 'GIVEN_OUT' | null>(null);
-  const [paths, setPaths] = useState<Path[]>([{ tokenIn: null, hops: [], amount: '' }]);
+  const [swapType, setSwapType] = useState<BatchSwapType | null>(null);
+  const [paths, setPaths] = useState<BatchSwapPathData[]>([{ tokenIn: null, hops: [], amount: '' }]);
 
   return (
     <div style={{ marginTop: 24, marginLeft: 18, marginRight: 18, paddingBottom: 120 }}>
@@ -137,6 +130,7 @@ export function BatchSwapPage() {
           </div>
         </div>
       </Typography>
+      <BatchSwapData swapType={swapType || 'GIVEN_IN'} paths={paths} tokens={tokens} />
     </div>
   );
 }
