@@ -157,14 +157,18 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
               <Input.TextArea
                 rows={12}
                 readOnly={true}
-                value={vault.interface.encodeFunctionData('batchSwap', [
-                  isGivenIn ? 0 : 1,
-                  batchSwapSteps,
-                  assets,
-                  { sender, fromInternalBalance, recipient, toInternalBalance },
-                  [],
-                  deadline || MaxUint256.toString(),
-                ])}
+                value={
+                  assetDeltas.length > 0
+                    ? vault.interface.encodeFunctionData('batchSwap', [
+                        isGivenIn ? 0 : 1,
+                        batchSwapSteps,
+                        assets,
+                        { sender, fromInternalBalance, recipient, toInternalBalance },
+                        assetDeltas, // TODO: add slippage in here
+                        deadline || MaxUint256.toString(),
+                      ])
+                    : 'The output of the query is used for setting limits on your batch swap. Trigger a query below to generate the encoded swap data.'
+                }
               />
             )}
           </Card>
@@ -181,7 +185,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
           />
         </div>
         <Space direction="horizontal">
-          <Button size="large" disabled={!isPathInputValid} loading={isQuerying} onClick={queryBatchSwap}>
+          <Button size="large" disabled={!isPathInputValid || isQuerying} loading={isQuerying} onClick={queryBatchSwap}>
             Query
           </Button>
           <Button size="large" disabled={true} type="primary" onClick={() => {}}>
