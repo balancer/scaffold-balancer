@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 
 import { usePoolsData } from '~~/hooks/usePoolsData';
 import { SorConfigModal } from '~~/modules/sor/components/SorConfigModal';
-import { SorNetworkGraph } from '~~/modules/sor/components/SorNetworkGraph';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -155,7 +154,7 @@ export function SorPage() {
           </div>
         </Col>
       </Row>
-      <Title level={4} style={{ marginTop: 12 }}>
+      {/* <Title level={4} style={{ marginTop: 12 }}>
         Path graph
       </Title>
       <SorNetworkGraph
@@ -167,7 +166,7 @@ export function SorPage() {
 
           return true;
         })}
-      />
+      />*/}
       <SorConfigModal isOpen={configModalOpen} close={() => setConfigModalOpen(false)} />
     </div>
   );

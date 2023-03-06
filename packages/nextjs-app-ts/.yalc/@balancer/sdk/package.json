@@ -6,15 +6,11 @@
     },
     "version": "0.0.1",
     "description": "",
-    "main": "dist/index.js",
-    "typings": "dist/index.d.ts",
-    "module": "dist/index.esm.js",
-    "browser": "dist/index.umd.js",
-    "files": [
-        "dist"
-    ],
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "typings": "dist/cjs/index.d.ts",
     "scripts": {
-        "build": "rimraf dist && rollup -c",
+        "build": "tsc && tsc -p tsconfig.module.json",
         "lint": "eslint . --ext .js,.ts --max-warnings 0",
         "test": "jest"
     },
@@ -30,5 +26,11 @@
         "graphql-request": "^5.0.0",
         "isomorphic-fetch": "^3.0.0"
     },
-    "yalcSig": "79749417019e4c93b8d525ffae2947a6"
+    "files": [
+        "dist/cjs",
+        "dist/esm",
+        "LICENSE",
+        "README.md"
+    ],
+    "yalcSig": "e983c77ec9c44f7d174f301d41d2177f"
 }

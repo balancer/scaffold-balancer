@@ -19,9 +19,13 @@ export function usePoolsData() {
     async () => {
       // TODO: this subgraph url is for the actual network, so we need to make sure it doesn't fetch new data not
       // TODO: present on the fork. Ideally we would be able to determine the block number at which the fork was created
-      const subgraphPoolProvider = new SubgraphPoolProvider(forkedNetworkInfo?.balancer?.subgraphUrl || '', {
-        gqlAdditionalPoolQueryFields: 'name symbol totalLiquidity',
-      });
+      const subgraphPoolProvider = new SubgraphPoolProvider(
+        forkedChainId,
+        forkedNetworkInfo?.balancer?.subgraphUrl || '',
+        {
+          gqlAdditionalPoolQueryFields: 'name symbol totalLiquidity',
+        }
+      );
       const timestamp = Math.floor(new Date().getTime() / 1000);
 
       const response = (await subgraphPoolProvider.getPools({ timestamp })) as GetPoolsResponseExtended;

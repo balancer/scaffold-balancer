@@ -33,7 +33,7 @@ export function BatchSwapData({ tokens, swapType, paths, scaffoldAppProviders }:
   const settingsContext = useContext(EthComponentsSettingsContext);
   const gasPrice = useTxGasPrice();
   const isGivenIn = swapType === 'GIVEN_IN';
-  const { account, provider, chainId } = useEthersAppContext();
+  const { account, chainId } = useEthersAppContext();
   const vault = useAppContracts('Vault', chainId);
   const [activeDataTab, setActiveDataTab] = useState<string>('data');
   const [sender, setSender] = useState(account || ZERO_ADDRESS);
