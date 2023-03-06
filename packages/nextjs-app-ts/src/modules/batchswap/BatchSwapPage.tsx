@@ -1,6 +1,7 @@
 import { Button, Divider, Select, Typography } from 'antd';
 import React, { useState } from 'react';
 
+import { IScaffoldAppProviders } from '~common/models';
 import { usePoolsData } from '~~/hooks/usePoolsData';
 import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
 import { BatchSwapData } from '~~/modules/batchswap/components/BatchSwapData';
@@ -8,7 +9,11 @@ import { BatchSwapPath } from '~~/modules/batchswap/components/BatchSwapPath';
 
 const { Title, Paragraph, Text } = Typography;
 
-export function BatchSwapPage() {
+interface Props {
+  scaffoldAppProviders: IScaffoldAppProviders;
+}
+
+export function BatchSwapPage({ scaffoldAppProviders }: Props) {
   const { pools, tokens } = usePoolsData();
   const [swapType, setSwapType] = useState<BatchSwapType>('GIVEN_IN');
   const [paths, setPaths] = useState<BatchSwapPathData[]>([{ tokenIn: null, hops: [], amount: '' }]);
@@ -131,7 +136,12 @@ export function BatchSwapPage() {
           </div>
         </div>
       </Typography>
-      <BatchSwapData swapType={swapType || 'GIVEN_IN'} paths={paths} tokens={tokens} />
+      <BatchSwapData
+        swapType={swapType || 'GIVEN_IN'}
+        paths={paths}
+        tokens={tokens}
+        scaffoldAppProviders={scaffoldAppProviders}
+      />
     </div>
   );
 }

@@ -2,11 +2,15 @@ import { BatchSwapStep, RawPoolToken, ZERO_ADDRESS } from '@balancer/sdk';
 import { formatFixed } from '@ethersproject/bignumber';
 import { parseUnits } from '@ethersproject/units';
 import { Alert, Button, Card, Col, Input, Row, Space, Typography } from 'antd';
+import { transactor } from 'eth-components/functions';
+import { EthComponentsSettingsContext } from 'eth-components/models';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { BigNumber } from 'ethers';
 import { cloneDeep, uniq } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
+import { useAppContracts } from '~common/components/context';
+import { IScaffoldAppProviders } from '~common/models';
 import { TokenApprovals } from '~~/components/TokenApprovals';
 import { TokenSnatch } from '~~/components/TokenSnatch';
 import { MaxUint256 } from '~~/helpers/constants';
@@ -15,17 +19,22 @@ import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
 import { useVault } from '~~/hooks/useVault';
 import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
 import { BatchSwapSettings } from '~~/modules/batchswap/components/BatchSwapSettings';
+import { useTxGasPrice } from '~~/modules/pool/hooks/useTxGasPrice';
 
 interface Props {
   swapType: BatchSwapType;
   paths: BatchSwapPathData[];
   tokens: RawPoolToken[];
+  scaffoldAppProviders: IScaffoldAppProviders;
 }
 
-export function BatchSwapData({ tokens, swapType, paths }: Props) {
-  const vault = useVault();
+export function BatchSwapData({ tokens, swapType, paths, scaffoldAppProviders }: Props) {
+  const queryVault = useVault();
+  const settingsContext = useContext(EthComponentsSettingsContext);
+  const gasPrice = useTxGasPrice();
   const isGivenIn = swapType === 'GIVEN_IN';
-  const { account } = useEthersAppContext();
+  const { account, provider, chainId } = useEthersAppContext();
+  const vault = useAppContracts('Vault', chainId);
   const [activeDataTab, setActiveDataTab] = useState<string>('data');
   const [sender, setSender] = useState(account || ZERO_ADDRESS);
   const [recipient, setRecipient] = useState(account || ZERO_ADDRESS);
@@ -35,6 +44,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
   const [deadline, setDeadline] = useState('');
   const [slippage, setSlippage] = useState('0.25');
   const [isQuerying, setIsQuerying] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
   const [queried, setQueried] = useState<{ swapType: BatchSwapType; paths: BatchSwapPathData[] } | null>(null);
 
   useEffect(() => {
@@ -83,7 +93,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
 
   const queryBatchSwap = async (): Promise<void> => {
     setIsQuerying(true);
-    const response: BigNumber[] = await vault.queryBatchSwap(isGivenIn ? 0 : 1, batchSwapSteps, assets, {
+    const response: BigNumber[] = await queryVault.queryBatchSwap(isGivenIn ? 0 : 1, batchSwapSteps, assets, {
       sender,
       fromInternalBalance,
       recipient,
@@ -93,6 +103,26 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
     setAssetDeltas(response.map((item) => item.toString()));
     setQueried(cloneDeep({ swapType, paths }));
     setIsQuerying(false);
+  };
+
+  const executeBatchSwap = async () => {
+    setIsSwapping(true);
+    const signer = scaffoldAppProviders.localAdaptor?.signer;
+    const wrapper = transactor(settingsContext, signer, gasPrice);
+
+    if (wrapper && account) {
+      await wrapper(
+        vault.batchSwap(
+          isGivenIn ? 0 : 1,
+          batchSwapSteps,
+          assets,
+          { sender, fromInternalBalance, recipient, toInternalBalance },
+          assetDeltas, // TODO: add slippage in here
+          deadline || MaxUint256.toString()
+        )
+      );
+    }
+    setIsSwapping(false);
   };
 
   return (
@@ -146,7 +176,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
               <Input.TextArea
                 rows={12}
                 readOnly={true}
-                value={vault.interface.encodeFunctionData('queryBatchSwap', [
+                value={queryVault.interface.encodeFunctionData('queryBatchSwap', [
                   isGivenIn ? 0 : 1,
                   batchSwapSteps,
                   assets,
@@ -160,7 +190,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
                 readOnly={true}
                 value={
                   assetDeltas.length > 0
-                    ? vault.interface.encodeFunctionData('batchSwap', [
+                    ? queryVault.interface.encodeFunctionData('batchSwap', [
                         isGivenIn ? 0 : 1,
                         batchSwapSteps,
                         assets,
@@ -193,10 +223,19 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
           />
         </div>
         <Space direction="horizontal">
-          <Button size="large" disabled={!isPathInputValid || isQuerying} loading={isQuerying} onClick={queryBatchSwap}>
+          <Button
+            size="large"
+            disabled={!isPathInputValid || isQuerying}
+            loading={isQuerying}
+            onClick={() => queryBatchSwap()}>
             Query
           </Button>
-          <Button size="large" disabled={true} type="primary" onClick={() => {}}>
+          <Button
+            size="large"
+            disabled={!isPathInputValid || assetDeltas.length === 0}
+            loading={isSwapping}
+            type="primary"
+            onClick={() => executeBatchSwap()}>
             Execute
           </Button>
         </Space>

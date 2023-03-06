@@ -141,7 +141,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
       {
         name: 'BatchSwap',
         title: 'Batch Swap',
-        content: <BatchSwapPage />,
+        content: <BatchSwapPage scaffoldAppProviders={scaffoldAppProviders} />,
       },
     ],
   };
