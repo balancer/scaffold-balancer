@@ -4,8 +4,8 @@ import { parseUnits } from '@ethersproject/units';
 import { Alert, Button, Card, Col, Input, Row, Space, Typography } from 'antd';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { BigNumber } from 'ethers';
-import { uniq } from 'lodash';
-import React, { useState } from 'react';
+import { cloneDeep, uniq } from 'lodash';
+import React, { useEffect, useState } from 'react';
 
 import { MaxUint256 } from '~~/helpers/constants';
 import { getToken } from '~~/helpers/tokens';
@@ -34,6 +34,13 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
   const [deadline, setDeadline] = useState('');
   const [slippage, setSlippage] = useState('0.25');
   const [isQuerying, setIsQuerying] = useState(false);
+  const [queried, setQueried] = useState<{ swapType: BatchSwapType; paths: BatchSwapPathData[] } | null>(null);
+
+  useEffect(() => {
+    if (assetDeltas.length > 0 && JSON.stringify(queried) !== JSON.stringify({ swapType, paths })) {
+      setAssetDeltas([]);
+    }
+  }, [swapType, JSON.stringify(paths)]);
 
   const isPathInputValid =
     paths.filter(
@@ -83,6 +90,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
     });
 
     setAssetDeltas(response.map((item) => item.toString()));
+    setQueried(cloneDeep({ swapType, paths }));
     setIsQuerying(false);
   };
 
@@ -162,7 +170,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
           </Card>
         </Col>
       </Row>
-      <div style={{ display: 'flex', marginTop: 12, marginBottom: 12 }}>
+      <div style={{ display: 'flex', marginTop: 12, marginBottom: 12, alignItems: 'flex-end' }}>
         <div style={{ flex: 1 }}>
           <BatchSwapTokenApprovals
             tokensIn={tokensIn}
@@ -191,7 +199,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
               <Typography.Text>
                 Since the same token can appear multiple times, we show the combined asset deltas that would result from
                 the batch swap. Positive values are amounts spent by the sender. Negative values are amounts sent to the
-                recipient.
+                recipient. 0 values are likely hop tokens.
               </Typography.Text>
               {assetDeltas.map((delta, index) => {
                 const token = getToken(assets[index], tokens);

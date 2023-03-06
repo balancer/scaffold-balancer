@@ -85,7 +85,8 @@ export function BatchSwapPage() {
                     paths[pathIdx].hops = paths[pathIdx].hops.slice(0, hopIdx + 1);
                   } else if (
                     paths[pathIdx].hops[hopIdx].tokenOut !== null &&
-                    paths[pathIdx].hops[hopIdx].tokenOut !== tokenOut
+                    paths[pathIdx].hops[hopIdx].tokenOut !== tokenOut &&
+                    hopIdx < paths[pathIdx].hops.length - 1
                   ) {
                     paths[pathIdx].hops = [
                       ...paths[pathIdx].hops.slice(0, hopIdx + 1),
