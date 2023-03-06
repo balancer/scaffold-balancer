@@ -177,7 +177,9 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
       </Row>
       {isPathInputValid && tokensIn.length > 0 && (
         <div style={{ marginTop: 12 }}>
-          <TokenSnatch tokens={tokensIn} />
+          <Card title="Snatch tokens">
+            <TokenSnatch tokens={tokensIn} />
+          </Card>
         </div>
       )}
       <div style={{ display: 'flex', marginTop: 16, marginBottom: 12, alignItems: 'flex-end' }}>

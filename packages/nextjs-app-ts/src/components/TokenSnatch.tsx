@@ -1,4 +1,4 @@
-import { Button, Card, Input, Select, Typography } from 'antd';
+import { Button, Input, Select, Typography } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { EthComponentsSettingsContext } from 'eth-components/models';
 import { useEthersAppContext } from 'eth-hooks/context';
@@ -40,7 +40,7 @@ export const TokenSnatch: FC<Props> = ({ tokens }) => {
   };
 
   return (
-    <Card title="Snatch tokens">
+    <div>
       <Typography.Paragraph style={{ color: 'gray', marginBottom: 12 }}>
         If you do not have the appropriate tokens, you can snatch them from any holder. Since we impersonate the
         account, it must also have enough ETH to pay for the tx cost. Holders:{' '}
@@ -109,6 +109,6 @@ export const TokenSnatch: FC<Props> = ({ tokens }) => {
           </span>
         ))}
       </div>
-    </Card>
+    </div>
   );
 };
