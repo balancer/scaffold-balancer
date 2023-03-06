@@ -94,6 +94,7 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/no-unsafe-argument': 'off',
     '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     'prefer-destructuring': 'off',
     'prefer-template': 'off',
     'react/destructuring-assignment': 'off',

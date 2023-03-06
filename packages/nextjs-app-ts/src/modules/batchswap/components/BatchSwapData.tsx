@@ -1,18 +1,19 @@
 import { BatchSwapStep, RawPoolToken, ZERO_ADDRESS } from '@balancer/sdk';
+import { formatFixed } from '@ethersproject/bignumber';
 import { parseUnits } from '@ethersproject/units';
-import { Alert, Button, Card, Checkbox, Col, Input, Row, Space, Typography } from 'antd';
+import { Alert, Button, Card, Col, Input, Row, Space, Typography } from 'antd';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { BigNumber } from 'ethers';
 import { uniq } from 'lodash';
 import React, { useState } from 'react';
 
 import { MaxUint256 } from '~~/helpers/constants';
+import { getToken } from '~~/helpers/tokens';
 import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
 import { useVault } from '~~/hooks/useVault';
 import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
+import { BatchSwapSettings } from '~~/modules/batchswap/components/BatchSwapSettings';
 import { BatchSwapTokenApprovals } from '~~/modules/batchswap/components/BatchSwapTokenApprovals';
-
-const { Text } = Typography;
 
 interface Props {
   swapType: BatchSwapType;
@@ -32,6 +33,8 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
   const [assetDeltas, setAssetDeltas] = useState<string[]>([]);
   const [deadline, setDeadline] = useState('');
   const [slippage, setSlippage] = useState('0.25');
+  const [isQuerying, setIsQuerying] = useState(false);
+
   const isPathInputValid =
     paths.filter(
       (path) =>
@@ -71,6 +74,7 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
     : [];
 
   const queryBatchSwap = async (): Promise<void> => {
+    setIsQuerying(true);
     const response: BigNumber[] = await vault.queryBatchSwap(isGivenIn ? 0 : 1, batchSwapSteps, assets, {
       sender,
       fromInternalBalance,
@@ -79,79 +83,27 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
     });
 
     setAssetDeltas(response.map((item) => item.toString()));
+    setIsQuerying(false);
   };
 
   return (
     <div>
       <Row gutter={8}>
         <Col span={12}>
-          <Card title="Settings">
-            <Space direction="vertical" style={{ width: '100%' }} size={16}>
-              <div>
-                <div style={{ display: 'flex', marginBottom: 4 }}>
-                  <div style={{ flex: 1 }}>
-                    <Text strong>Sender</Text>
-                  </div>
-                  From internal balance
-                  <Checkbox
-                    style={{ marginLeft: 8 }}
-                    onChange={(e) => setFromInternalBalance(e.target.value)}
-                    value={fromInternalBalance}
-                  />
-                </div>
-                <Input
-                  value={sender}
-                  onChange={(e) => setSender(e.target.value)}
-                  placeholder="Sender"
-                  style={{ width: '100%' }}
-                />
-              </div>
-              <div>
-                <div style={{ display: 'flex', marginBottom: 4 }}>
-                  <div style={{ flex: 1 }}>
-                    <Text strong>Recipient</Text>
-                  </div>
-                  To internal balance
-                  <Checkbox
-                    style={{ marginLeft: 8 }}
-                    onChange={(e) => setToInternalBalance(e.target.value)}
-                    value={toInternalBalance}
-                  />
-                </div>
-                <Input
-                  value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  placeholder="Recipient"
-                  style={{ width: '100%' }}
-                />
-              </div>
-              <div>
-                <Text strong>Slippage</Text>
-                <Input
-                  value={slippage}
-                  onChange={(e) => setSlippage(e.target.value)}
-                  placeholder={`Slippage 1 = 1%`}
-                  style={{ width: '100%' }}
-                  type="number"
-                  min={0}
-                />
-              </div>
-              <div>
-                <Text strong>Deadline</Text>
-                <Input
-                  value={deadline}
-                  onChange={(e) => setDeadline(e.target.value)}
-                  placeholder={`0 or empty for no deadline`}
-                  style={{ width: '100%' }}
-                  type="number"
-                  min={0}
-                />
-              </div>
-              <Text italic style={{ color: 'gray' }}>
-                The settings above are not required for queries.
-              </Text>
-            </Space>
-          </Card>
+          <BatchSwapSettings
+            fromInternalBalance={fromInternalBalance}
+            toInternalBalance={toInternalBalance}
+            sender={sender}
+            recipient={recipient}
+            setFromInternalBalance={setFromInternalBalance}
+            setToInternalBalance={setToInternalBalance}
+            setSender={setSender}
+            setRecipient={setRecipient}
+            slippage={slippage}
+            setSlippage={setSlippage}
+            deadline={deadline}
+            setDeadline={setDeadline}
+          />
         </Col>
         <Col span={12}>
           <Card
@@ -221,19 +173,41 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
           />
         </div>
         <Space direction="horizontal">
-          <Button
-            disabled={!isPathInputValid}
-            onClick={() => {
-              void queryBatchSwap();
-            }}>
+          <Button size="large" disabled={!isPathInputValid} loading={isQuerying} onClick={queryBatchSwap}>
             Query
           </Button>
-          <Button disabled={true} type="primary" onClick={() => {}}>
+          <Button size="large" disabled={true} type="primary" onClick={() => {}}>
             Execute
           </Button>
         </Space>
       </div>
-      {assetDeltas.length > 0 && <Alert message={assetDeltas.join(',')} type="success" />}
+      {isPathInputValid && assetDeltas.length > 0 && (
+        <Alert
+          message={
+            <Space direction="vertical" size={4}>
+              <Typography.Text strong style={{ fontSize: 20 }}>
+                Query results
+              </Typography.Text>
+              <Typography.Text>
+                Since the same token can appear multiple times, we show the combined asset deltas that would result from
+                the batch swap. Positive values are amounts spent by the sender. Negative values are amounts sent to the
+                recipient.
+              </Typography.Text>
+              {assetDeltas.map((delta, index) => {
+                const token = getToken(assets[index], tokens);
+
+                return (
+                  <div key={index}>
+                    {formatFixed(delta, token?.decimals || 18)} {token?.symbol}
+                  </div>
+                );
+              })}
+              <div>Asset deltas: {assetDeltas.join(',')}</div>
+            </Space>
+          }
+          type="success"
+        />
+      )}
     </div>
   );
 }
