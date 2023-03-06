@@ -343,7 +343,7 @@ __metadata:
 
 "@balancer/sdk@file:.yalc/@balancer/sdk::locator=%40scaffold-eth%2Fnextjs-app%40workspace%3Apackages%2Fnextjs-app-ts":
   version: 0.0.1
-  resolution: "@balancer/sdk@file:.yalc/@balancer/sdk#.yalc/@balancer/sdk::hash=2d2919&locator=%40scaffold-eth%2Fnextjs-app%40workspace%3Apackages%2Fnextjs-app-ts"
+  resolution: "@balancer/sdk@file:.yalc/@balancer/sdk#.yalc/@balancer/sdk::hash=a0565f&locator=%40scaffold-eth%2Fnextjs-app%40workspace%3Apackages%2Fnextjs-app-ts"
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/address": ^5.7.0
@@ -355,7 +355,7 @@ __metadata:
     decimal.js-light: ^2.5.1
     graphql-request: ^5.0.0
     isomorphic-fetch: ^3.0.0
-  checksum: 709eb4d111249136d2844c6db3a846c5a765893f590450031a3c1e10f3c56231649b358f6c3621009c52277a0ec6e2189a1cf4fbd215812c3ab76334a99ce6ec
+  checksum: 1371245c6de5947d3c49df2169fd29474c72c9728009be7bfa4f01dae014fd078c68f58e07ef655b55d58a3e7e9b92ac6100d5ac14f3718151486e5a6877471e
   languageName: node
   linkType: hard
 
@@ -11070,8 +11070,8 @@ __metadata:
   linkType: hard
 
 "graphql-request@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "graphql-request@npm:5.1.0"
+  version: 5.2.0
+  resolution: "graphql-request@npm:5.2.0"
   dependencies:
     "@graphql-typed-document-node/core": ^3.1.1
     cross-fetch: ^3.1.5
@@ -11079,7 +11079,7 @@ __metadata:
     form-data: ^3.0.0
   peerDependencies:
     graphql: 14 - 16
-  checksum: 8b65d5c1b0cad8996a843b52305b2712ffbf842c700487d4cee1ed719f22baacaacfddafb65572bcddd67d57fd1d2d389dee2430ffba4b34c3ab542d079446c7
+  checksum: a8aa37816378898e6fc8c4db04a1c114c98f98d90718cf1680bd96b22724bd43b1210619f9b0d328b5c1acb4f7b76d2227a2537cd5ab059bb54cf0debecb33bf
   languageName: node
   linkType: hard
 
