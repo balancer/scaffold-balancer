@@ -2,11 +2,11 @@ import { Card, Col, Divider, Row } from 'antd';
 import { Address } from 'eth-components/ant';
 import { FC } from 'react';
 
+import { TokenSnatch } from '~~/components/TokenSnatch';
+import { useTokenBalances } from '~~/hooks/useTokenBalances';
 import { usePoolData } from '~~/modules/pool/hooks/usePoolData';
-import { useTokenBalances } from '~~/modules/pool/hooks/useTokenBalances';
 import { PoolApproveAssetsForm } from '~~/modules/pool/PoolApproveAssetsForm';
 import { PoolContractExitForm } from '~~/modules/pool/PoolContractExitForm';
-import { PoolContractGetAssetsForm } from '~~/modules/pool/PoolContractGetAssetsForm';
 import { PoolContractJoinForm } from '~~/modules/pool/PoolContractJoinForm';
 import { PoolContractSwapForm } from '~~/modules/pool/PoolContractSwapForm';
 
@@ -76,7 +76,7 @@ export const PoolContract: FC<Props> = ({ address }) => {
         </Row>
 
         <Divider style={{ margin: '12px 0' }} />
-        <PoolContractGetAssetsForm poolTokens={data?.poolTokens || []} />
+        <TokenSnatch tokens={data?.poolTokens || []} />
         <Divider style={{ margin: '18px 0' }} />
         <PoolApproveAssetsForm poolTokens={data?.poolTokens || []} />
         <Divider style={{ margin: '18px 0' }} />

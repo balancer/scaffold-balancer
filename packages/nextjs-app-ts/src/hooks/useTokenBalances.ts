@@ -4,17 +4,17 @@ import { formatUnits } from 'ethers/lib/utils';
 import { useQuery } from 'react-query';
 
 import { ERC20__factory } from '~common/generated/contract-types';
-import { PoolToken, PoolTokenWithUserBalance } from '~~/modules/pool/pool-types';
+import { MinimalToken } from '~~/helpers/global-types';
 
-export function useTokenBalances(poolTokens: PoolToken[]) {
+export function useTokenBalances<T extends MinimalToken>(tokens: T[]) {
   const { provider, account } = useEthersAppContext();
-  const addresses = poolTokens.map((token) => token.address);
+  const addresses = tokens.map((token) => token.address);
 
-  return useQuery<PoolTokenWithUserBalance[]>(
+  return useQuery<(T & { userBalance: string })[]>(
     ['useTokenBalances', addresses, account],
     async () => {
       return Promise.all(
-        poolTokens.map(async (poolToken) => {
+        tokens.map(async (poolToken) => {
           const tokenContract = new Contract(poolToken.address, ERC20__factory.abi, provider);
           const userBalance: BigNumber = await tokenContract.balanceOf(account);
 

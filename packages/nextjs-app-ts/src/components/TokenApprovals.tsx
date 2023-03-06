@@ -18,7 +18,7 @@ interface Props {
   allowances: (PoolToken & { allowance: string })[];
 }
 
-export function BatchSwapTokenApprovals({ tokensIn, allowances, refetchAllowances }: Props) {
+export function TokenApprovals({ tokensIn, allowances, refetchAllowances }: Props) {
   const settingsContext = useContext(EthComponentsSettingsContext);
   const { provider, account, chainId } = useEthersAppContext();
   const vault = useAppContracts('Vault', chainId);

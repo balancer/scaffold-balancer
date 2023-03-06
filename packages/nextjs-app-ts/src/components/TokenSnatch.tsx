@@ -1,4 +1,4 @@
-import { Button, Input, Select } from 'antd';
+import { Button, Card, Input, Select, Typography } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { EthComponentsSettingsContext } from 'eth-components/models';
 import { useEthersAppContext } from 'eth-hooks/context';
@@ -6,16 +6,16 @@ import { Interface, parseUnits } from 'ethers/lib/utils';
 import React, { FC, useContext, useState } from 'react';
 
 import { ERC20__factory } from '~common/generated/contract-types';
-import { useTokenBalances } from '~~/modules/pool/hooks/useTokenBalances';
+import { MinimalToken } from '~~/helpers/global-types';
+import { useTokenBalances } from '~~/hooks/useTokenBalances';
 import { useTxGasPrice } from '~~/modules/pool/hooks/useTxGasPrice';
-import { PoolToken } from '~~/modules/pool/pool-types';
 
 interface Props {
-  poolTokens: PoolToken[];
+  tokens: MinimalToken[];
 }
 
-export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
-  const { data: poolTokensWithUserBalance, refetch } = useTokenBalances(poolTokens);
+export const TokenSnatch: FC<Props> = ({ tokens }) => {
+  const { data: tokensWithUserBalances, refetch } = useTokenBalances(tokens);
   const settingsContext = useContext(EthComponentsSettingsContext);
 
   const [token, setToken] = useState<string | null>(null);
@@ -40,12 +40,11 @@ export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
   };
 
   return (
-    <div>
-      <div style={{ fontSize: 16 }}>Snatch pool tokens</div>
-      <div style={{ fontSize: 14, marginBottom: 12, color: 'gray' }}>
-        If you do not have the appropriate tokens for this pool, you can snatch them from any holder. Since we
-        impersonate the account, it must also have enough ETH to pay for the tx cost. Holders:{' '}
-        {poolTokens.map((token) => (
+    <Card title="Snatch tokens">
+      <Typography.Paragraph style={{ color: 'gray', marginBottom: 12 }}>
+        If you do not have the appropriate tokens, you can snatch them from any holder. Since we impersonate the
+        account, it must also have enough ETH to pay for the tx cost. Holders:{' '}
+        {tokens.map((token) => (
           <a
             href={`https://etherscan.io/token/${token.address}#balances`}
             key={token.address}
@@ -55,7 +54,8 @@ export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
             {token.symbol}
           </a>
         ))}
-      </div>
+      </Typography.Paragraph>
+
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Select
           showArrow={true}
@@ -70,7 +70,7 @@ export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
           placeholder="Token in"
           notFoundContent={null}
           style={{ width: '200px', marginRight: 12 }}>
-          {poolTokens.map((token) => (
+          {tokens.map((token) => (
             <Select.Option key={token.address} value={token.address}>
               <div>{token.symbol}</div>
             </Select.Option>
@@ -102,13 +102,13 @@ export const PoolContractGetAssetsForm: FC<Props> = ({ poolTokens }) => {
       </div>
       <div style={{ marginTop: 8 }}>
         <span style={{ marginRight: 4 }}> Your balance: </span>
-        {poolTokensWithUserBalance?.map((token, index) => (
+        {tokensWithUserBalances?.map((token, index) => (
           <span key={token.address} style={{ paddingRight: 2 }}>
             {token.userBalance} {token.symbol}
-            {index < poolTokensWithUserBalance.length - 1 ? ',' : ''}
+            {index < tokensWithUserBalances.length - 1 ? ',' : ''}
           </span>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };

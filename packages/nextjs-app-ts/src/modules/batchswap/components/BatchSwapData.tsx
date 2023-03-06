@@ -7,13 +7,14 @@ import { BigNumber } from 'ethers';
 import { cloneDeep, uniq } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
+import { TokenApprovals } from '~~/components/TokenApprovals';
+import { TokenSnatch } from '~~/components/TokenSnatch';
 import { MaxUint256 } from '~~/helpers/constants';
 import { getToken } from '~~/helpers/tokens';
 import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
 import { useVault } from '~~/hooks/useVault';
 import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
 import { BatchSwapSettings } from '~~/modules/batchswap/components/BatchSwapSettings';
-import { BatchSwapTokenApprovals } from '~~/modules/batchswap/components/BatchSwapTokenApprovals';
 
 interface Props {
   swapType: BatchSwapType;
@@ -174,9 +175,14 @@ export function BatchSwapData({ tokens, swapType, paths }: Props) {
           </Card>
         </Col>
       </Row>
-      <div style={{ display: 'flex', marginTop: 12, marginBottom: 12, alignItems: 'flex-end' }}>
+      {isPathInputValid && tokensIn.length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <TokenSnatch tokens={tokensIn} />
+        </div>
+      )}
+      <div style={{ display: 'flex', marginTop: 16, marginBottom: 12, alignItems: 'flex-end' }}>
         <div style={{ flex: 1 }}>
-          <BatchSwapTokenApprovals
+          <TokenApprovals
             tokensIn={tokensIn}
             refetchAllowances={async () => {
               await refetchTokenApprovals();
