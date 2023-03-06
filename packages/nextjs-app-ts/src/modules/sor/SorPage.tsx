@@ -1,23 +1,31 @@
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, Col, Divider, Empty, Input, Row, Select, Space, Typography } from 'antd';
+import { SmartOrderRouter, SwapKind, Token, TokenAmount } from '@balancer/sdk';
+import { Button, Card, Col, Divider, Empty, Input, Row, Select, Space, Typography } from 'antd';
 import React, { useState } from 'react';
 
+import { TokenApprovals } from '~~/components/TokenApprovals';
+import { TokenSnatch } from '~~/components/TokenSnatch';
 import { usePoolsData } from '~~/hooks/usePoolsData';
+import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
 import { SorConfigModal } from '~~/modules/sor/components/SorConfigModal';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
 export function SorPage() {
-  const { pools, poolTypes, tokens } = usePoolsData();
+  const { pools, poolTypes, tokens, parsedPools } = usePoolsData();
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const tokenOptions = tokens.map((token) => ({ label: `${token.symbol} - ${token.address}`, value: token.address }));
   const [selectedPoolTypes, setSelectedPoolTypes] = useState<string[]>([]);
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
   const [selectedPools, setSelectedPools] = useState<string[]>([]);
-  const [tokenIn, setTokenIn] = useState<string | null>(null);
-  const [tokenOut, setTokenOut] = useState<string | null>(null);
+  const [tokenInAddress, setTokenInAddress] = useState<string | null>(null);
+  const [tokenOutAddress, setTokenOutAddress] = useState<string | null>(null);
   const [swapType, setSwapType] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>('');
+  const tokenIn = tokens.find((token) => token.address === tokenInAddress);
+  const tokenOut = tokens.find((token) => token.address === tokenOutAddress);
+  const approvalTokens = tokens.filter((token) => token.address === tokenInAddress);
+  const { data: allowances, refetch: refetchTokenApprovals } = useTokenApprovals(approvalTokens);
 
   return (
     <div style={{ marginTop: 24, marginLeft: 18, marginRight: 18, paddingBottom: 120 }}>
@@ -113,8 +121,8 @@ export function SorPage() {
                 allowClear
                 style={{ width: '100%' }}
                 placeholder="Token in"
-                onChange={setTokenIn}
-                value={tokenIn}
+                onChange={setTokenInAddress}
+                value={tokenInAddress}
                 options={tokenOptions}
                 showArrow={true}
               />
@@ -125,8 +133,8 @@ export function SorPage() {
                 allowClear
                 style={{ width: '100%' }}
                 placeholder="Token out"
-                onChange={setTokenOut}
-                value={tokenOut}
+                onChange={setTokenOutAddress}
+                value={tokenOutAddress}
                 options={tokenOptions}
                 showArrow={true}
               />
@@ -136,14 +144,42 @@ export function SorPage() {
               <Input
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                placeholder={`Amount ${swapType === 'GIVEN_OUT' ? 'out' : 'in'}`}
+                placeholder={`Amount ${swapType === 'GIVEN_OUT' ? 'out' : 'in'} (1 WETH = 1.0)`}
                 style={{ width: '100%' }}
                 type="number"
               />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button style={{ marginRight: 8 }}>Query</Button>
-              <Button type="primary">Execute</Button>
+            <div style={{ display: 'flex' }}>
+              <TokenApprovals
+                tokensIn={approvalTokens}
+                refetchAllowances={async () => {
+                  await refetchTokenApprovals();
+                }}
+                allowances={allowances || []}
+              />
+              <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
+                <Button
+                  size="large"
+                  style={{ marginRight: 8 }}
+                  onClick={async () => {
+                    const tIn = new Token(1, tokenIn!.address, tokenIn!.decimals);
+                    const tOut = new Token(1, tokenOut!.address, tokenOut!.decimals);
+                    const tokenAmount = TokenAmount.fromHumanAmount(tIn, amount);
+
+                    const { quote, swap } = await SmartOrderRouter.getSwapsWithPools(
+                      tIn,
+                      tOut,
+                      SwapKind.GivenIn,
+                      tokenAmount,
+                      parsedPools
+                    );
+                  }}>
+                  Query
+                </Button>
+                <Button size="large" type="primary">
+                  Execute
+                </Button>
+              </div>
             </div>
           </Space>
         </Col>
@@ -154,6 +190,9 @@ export function SorPage() {
           </div>
         </Col>
       </Row>
+      <Card title="Snatch tokens" style={{ marginBottom: 64 }}>
+        <TokenSnatch tokens={tokens.filter((token) => token.address === tokenInAddress)} />
+      </Card>
       {/* <Title level={4} style={{ marginTop: 12 }}>
         Path graph
       </Title>

@@ -1,4 +1,4 @@
-import { GetPoolsResponse, RawPool, SubgraphPoolProvider } from '@balancer/sdk';
+import { BasePool, GetPoolsResponse, RawPool, SmartOrderRouter, SubgraphPoolProvider } from '@balancer/sdk';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 
@@ -8,6 +8,7 @@ export type RawPoolExtended = RawPool & { name: string; symbol: string; totalLiq
 
 type GetPoolsResponseExtended = Omit<GetPoolsResponse, 'pools'> & {
   pools: RawPoolExtended[];
+  parsedPools: BasePool[];
 };
 
 export function usePoolsData() {
@@ -34,12 +35,18 @@ export function usePoolsData() {
       return {
         ...response,
         pools: orderedPools,
+        parsedPools: SmartOrderRouter.parseRawPools({
+          chainId: forkedChainId,
+          pools: orderedPools,
+          customPoolFactories: [], // TODO: add custom factories here
+        }),
       };
     },
     { enabled: !!forkedNetworkInfo && !!forkedNetworkInfo.balancer }
   );
 
   const pools = query.data?.pools || [];
+  const parsedPools = query.data?.parsedPools || [];
   const tokens = _.uniqBy(pools.map((pool) => pool.tokens).flat(), 'address');
   const poolTypes = _.uniq(pools.map((pool) => pool.poolType));
 
@@ -48,5 +55,6 @@ export function usePoolsData() {
     pools,
     tokens,
     poolTypes,
+    parsedPools,
   };
 }
