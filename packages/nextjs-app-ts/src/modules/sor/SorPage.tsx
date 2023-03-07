@@ -34,6 +34,29 @@ export function SorPage() {
   const approvalTokens = tokens.filter((token) => token.address === tokenInAddress);
   const { chainId } = useEthersAppContext();
 
+  const filteredPools = parsedPools.filter((pool) => {
+    if (selectedPools.length > 0 && selectedPools.includes(pool.id)) {
+      return true;
+    }
+
+    if (selectedPoolTypes.length > 0 && !selectedPoolTypes.includes(pool.poolType)) {
+      return false;
+    }
+
+    if (
+      selectedTokens.length > 0 &&
+      pool.tokens.filter((token) => selectedTokens.includes(token.token.address)).length === 0
+    ) {
+      return false;
+    }
+
+    if (selectedPoolTypes.length === 0 && selectedTokens.length === 0 && selectedPools.length > 0) {
+      return false;
+    }
+
+    return true;
+  });
+
   const { data: allowances, refetch: refetchTokenApprovals } = useTokenApprovals(approvalTokens);
 
   return (
@@ -88,7 +111,7 @@ export function SorPage() {
                   if (tokenIn && tokenOut) {
                     const tIn = new Token(1, tokenIn.address, tokenIn.decimals);
                     const tOut = new Token(1, tokenOut.address, tokenOut.decimals);
-                    const tokenAmount = TokenAmount.fromHumanAmount(tIn, amount);
+                    const tokenAmount = TokenAmount.fromHumanAmount(swapType === 'GIVEN_OUT' ? tOut : tIn, amount);
 
                     /* const parsedPools = SmartOrderRouter.parseRawPools({
                       chainId: chainId || 1,
@@ -96,12 +119,13 @@ export function SorPage() {
                       customPoolFactories: [],
                     });*/
 
+                    console.log('filteredpools', filteredPools.length);
                     const result = await SmartOrderRouter.getSwapsWithPools(
                       tIn,
                       tOut,
-                      SwapKind.GivenIn,
+                      swapType === 'GIVEN_OUT' ? SwapKind.GivenOut : SwapKind.GivenIn,
                       tokenAmount,
-                      parsedPools
+                      filteredPools
                     );
 
                     setSwapInfo(result);
