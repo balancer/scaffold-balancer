@@ -7,4 +7,4 @@ export interface BatchSwapPathData {
   amount: string;
 }
 
-export type BatchSwapType = 'GIVEN_IN' | 'GIVEN_OUT';
+export type SwapType = 'GIVEN_IN' | 'GIVEN_OUT';

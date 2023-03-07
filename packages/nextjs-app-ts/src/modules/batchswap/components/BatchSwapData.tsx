@@ -17,12 +17,12 @@ import { MaxUint256 } from '~~/helpers/constants';
 import { getToken } from '~~/helpers/tokens';
 import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
 import { useVault } from '~~/hooks/useVault';
-import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
+import { BatchSwapPathData, SwapType } from '~~/modules/batchswap/batchswap-types';
 import { BatchSwapSettings } from '~~/modules/batchswap/components/BatchSwapSettings';
 import { useTxGasPrice } from '~~/modules/pool/hooks/useTxGasPrice';
 
 interface Props {
-  swapType: BatchSwapType;
+  swapType: SwapType;
   paths: BatchSwapPathData[];
   tokens: RawPoolToken[];
   scaffoldAppProviders: IScaffoldAppProviders;
@@ -45,7 +45,7 @@ export function BatchSwapData({ tokens, swapType, paths, scaffoldAppProviders }:
   const [slippage, setSlippage] = useState('0.25');
   const [isQuerying, setIsQuerying] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
-  const [queried, setQueried] = useState<{ swapType: BatchSwapType; paths: BatchSwapPathData[] } | null>(null);
+  const [queried, setQueried] = useState<{ swapType: SwapType; paths: BatchSwapPathData[] } | null>(null);
 
   useEffect(() => {
     if (assetDeltas.length > 0 && JSON.stringify(queried) !== JSON.stringify({ swapType, paths })) {

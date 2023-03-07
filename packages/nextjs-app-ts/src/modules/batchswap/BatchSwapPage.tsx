@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { IScaffoldAppProviders } from '~common/models';
 import { usePoolsData } from '~~/hooks/usePoolsData';
-import { BatchSwapPathData, BatchSwapType } from '~~/modules/batchswap/batchswap-types';
+import { BatchSwapPathData, SwapType } from '~~/modules/batchswap/batchswap-types';
 import { BatchSwapData } from '~~/modules/batchswap/components/BatchSwapData';
 import { BatchSwapPath } from '~~/modules/batchswap/components/BatchSwapPath';
 
@@ -15,7 +15,7 @@ interface Props {
 
 export function BatchSwapPage({ scaffoldAppProviders }: Props) {
   const { pools, tokens } = usePoolsData();
-  const [swapType, setSwapType] = useState<BatchSwapType>('GIVEN_IN');
+  const [swapType, setSwapType] = useState<SwapType>('GIVEN_IN');
   const [paths, setPaths] = useState<BatchSwapPathData[]>([{ tokenIn: null, hops: [], amount: '' }]);
 
   return (

@@ -5,6 +5,7 @@ import { useEthersAppContext } from 'eth-hooks/context';
 import { Interface, parseUnits } from 'ethers/lib/utils';
 import React, { FC, useContext, useState } from 'react';
 
+import { getNetworkInfo } from '~common/functions';
 import { ERC20__factory } from '~common/generated/contract-types';
 import { MinimalToken } from '~~/helpers/global-types';
 import { useTokenBalances } from '~~/hooks/useTokenBalances';
@@ -21,7 +22,8 @@ export const TokenSnatch: FC<Props> = ({ tokens }) => {
   const [token, setToken] = useState<string | null>(null);
   const [addressToSnatchFrom, setAddressToSnatchFrom] = useState<string>('');
   const [amountToSnatch, setAmountToSnatch] = useState<string>('');
-  const { provider, account } = useEthersAppContext();
+  const { provider, account, chainId } = useEthersAppContext();
+  const networkInfo = getNetworkInfo(chainId);
   const gasPrice = useTxGasPrice();
 
   const snatch = async (): Promise<void> => {
@@ -46,7 +48,7 @@ export const TokenSnatch: FC<Props> = ({ tokens }) => {
         account, it must also have enough ETH to pay for the tx cost. Holders:{' '}
         {tokens.map((token) => (
           <a
-            href={`https://etherscan.io/token/${token.address}#balances`}
+            href={`${networkInfo?.blockExplorer}token/${token.address}#balances`}
             key={token.address}
             target="_blank"
             rel="noreferrer"

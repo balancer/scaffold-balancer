@@ -22,7 +22,7 @@ export const networkDefinitions: Record<TNetworkNamesList, TNetworkDefinition> =
     name: 'localhost',
     color: '#666666',
     chainId: 31337,
-    blockExplorer: '',
+    blockExplorer: 'https://etherscan.io/',
     rpcUrl: 'http://' + hostname + ':8545',
   },
   mainnet: {

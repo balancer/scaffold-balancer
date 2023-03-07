@@ -4,7 +4,7 @@ import { Button, Card, Input, Select, Space, Steps, Typography } from 'antd';
 import React from 'react';
 
 import { RawPoolExtended } from '~~/hooks/usePoolsData';
-import { BatchSwapType } from '~~/modules/batchswap/batchswap-types';
+import { SwapType } from '~~/modules/batchswap/batchswap-types';
 
 const { Text } = Typography;
 
@@ -12,7 +12,7 @@ interface Props {
   pathIndex: number;
   pools: RawPoolExtended[];
   tokens: RawPoolToken[];
-  swapType: BatchSwapType;
+  swapType: SwapType;
   tokenIn: string | null;
   amount: string;
   hops: {

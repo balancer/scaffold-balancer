@@ -1,12 +1,14 @@
 import { Input, Select, Space, Typography } from 'antd';
 import React from 'react';
 
+import { SwapType } from '~~/modules/batchswap/batchswap-types';
+
 const { Title, Text } = Typography;
 
 interface Props {
   tokenOptions: { label: string; value: string }[];
-  swapType: string | null;
-  setSwapType: (value: string | null) => void;
+  swapType: SwapType | null;
+  setSwapType: (value: SwapType | null) => void;
   tokenInAddress: string | null;
   setTokenInAddress: (value: string | null) => void;
   tokenOutAddress: string | null;
@@ -50,6 +52,8 @@ export function SorSwapConfig({
           value={tokenInAddress}
           options={tokenOptions}
           showArrow={true}
+          showSearch
+          optionFilterProp="label"
         />
       </div>
       <div>
@@ -62,6 +66,8 @@ export function SorSwapConfig({
           value={tokenOutAddress}
           options={tokenOptions}
           showArrow={true}
+          showSearch
+          optionFilterProp="label"
         />
       </div>
       <div>

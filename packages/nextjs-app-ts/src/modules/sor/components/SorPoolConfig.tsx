@@ -41,6 +41,8 @@ export function SorPoolConfig({
           options={poolTypes.map((type) => ({ label: type, value: type }))}
           showArrow={true}
           value={selectedPoolTypes}
+          showSearch
+          optionFilterProp="label"
         />
       </div>
       <div>
@@ -54,6 +56,8 @@ export function SorPoolConfig({
           options={tokenOptions}
           showArrow={true}
           value={selectedTokens}
+          showSearch
+          optionFilterProp="label"
         />
       </div>
       <div>
@@ -67,6 +71,8 @@ export function SorPoolConfig({
           options={pools.map((pool) => ({ label: `${pool.symbol} - ${pool.id}`, value: pool.id }))}
           showArrow={true}
           value={selectedPools}
+          showSearch
+          optionFilterProp="label"
         />
       </div>
     </Space>

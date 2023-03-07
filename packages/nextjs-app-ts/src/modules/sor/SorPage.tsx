@@ -1,16 +1,19 @@
 import { SettingOutlined } from '@ant-design/icons';
-import { SmartOrderRouter, SwapKind, Token, TokenAmount } from '@balancer/sdk';
+import { SmartOrderRouter, SwapInfo, SwapKind, Token, TokenAmount } from '@balancer/sdk';
 import { Button, Card, Col, Empty, Row, Typography } from 'antd';
+import { useEthersAppContext } from 'eth-hooks/context';
 import React, { useState } from 'react';
 
 import { TokenApprovals } from '~~/components/TokenApprovals';
 import { TokenSnatch } from '~~/components/TokenSnatch';
 import { usePoolsData } from '~~/hooks/usePoolsData';
 import { useTokenApprovals } from '~~/hooks/useTokenApprovals';
+import { SwapType } from '~~/modules/batchswap/batchswap-types';
 import { SorConfigModal } from '~~/modules/sor/components/SorConfigModal';
 import { SorPageHeader } from '~~/modules/sor/components/SorPageHeader';
 import { SorPoolConfig } from '~~/modules/sor/components/SorPoolConfig';
 import { SorSwapConfig } from '~~/modules/sor/components/SorSwapConfig';
+import { SorSwapQueryResults } from '~~/modules/sor/components/SorSwapQueryResults';
 
 const { Title } = Typography;
 
@@ -23,11 +26,14 @@ export function SorPage() {
   const [selectedPools, setSelectedPools] = useState<string[]>([]);
   const [tokenInAddress, setTokenInAddress] = useState<string | null>(null);
   const [tokenOutAddress, setTokenOutAddress] = useState<string | null>(null);
-  const [swapType, setSwapType] = useState<string | null>(null);
+  const [swapType, setSwapType] = useState<SwapType | null>(null);
   const [amount, setAmount] = useState<string>('');
+  const [swapInfo, setSwapInfo] = useState<SwapInfo | null>(null);
   const tokenIn = tokens.find((token) => token.address === tokenInAddress);
   const tokenOut = tokens.find((token) => token.address === tokenOutAddress);
   const approvalTokens = tokens.filter((token) => token.address === tokenInAddress);
+  const { chainId } = useEthersAppContext();
+
   const { data: allowances, refetch: refetchTokenApprovals } = useTokenApprovals(approvalTokens);
 
   return (
@@ -84,7 +90,13 @@ export function SorPage() {
                     const tOut = new Token(1, tokenOut.address, tokenOut.decimals);
                     const tokenAmount = TokenAmount.fromHumanAmount(tIn, amount);
 
-                    const { quote, swap } = await SmartOrderRouter.getSwapsWithPools(
+                    /* const parsedPools = SmartOrderRouter.parseRawPools({
+                      chainId: chainId || 1,
+                      pools,
+                      customPoolFactories: [],
+                    });*/
+
+                    const result = await SmartOrderRouter.getSwapsWithPools(
                       tIn,
                       tOut,
                       SwapKind.GivenIn,
@@ -92,8 +104,7 @@ export function SorPage() {
                       parsedPools
                     );
 
-                    console.log('quote', quote);
-                    console.log('swap', swap);
+                    setSwapInfo(result);
                   }
                 }}>
                 Query
@@ -105,10 +116,26 @@ export function SorPage() {
           </div>
         </Col>
         <Col span={12} style={{ border: '1px solid lightGray', borderRadius: 8 }}>
-          <div
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Swap query results" />
-          </div>
+          {swapInfo && swapType && tokenIn && tokenOut ? (
+            <SorSwapQueryResults
+              swapInfo={swapInfo}
+              swapType={swapType}
+              tokenIn={tokenIn}
+              tokenOut={tokenOut}
+              tokens={tokens}
+            />
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+              }}>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Swap query results" />
+            </div>
+          )}
         </Col>
       </Row>
       <Card title="Snatch tokens" style={{ marginBottom: 64 }}>
