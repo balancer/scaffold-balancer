@@ -4,7 +4,7 @@
     "publishConfig": {
         "access": "public"
     },
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
@@ -32,5 +32,5 @@
         "LICENSE",
         "README.md"
     ],
-    "yalcSig": "e983c77ec9c44f7d174f301d41d2177f"
+    "yalcSig": "496dc931e55ddcb812b9c25499f001d2"
 }

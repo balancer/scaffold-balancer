@@ -342,8 +342,8 @@ __metadata:
   linkType: hard
 
 "@balancer/sdk@file:.yalc/@balancer/sdk::locator=%40scaffold-eth%2Fnextjs-app%40workspace%3Apackages%2Fnextjs-app-ts":
-  version: 0.0.1
-  resolution: "@balancer/sdk@file:.yalc/@balancer/sdk#.yalc/@balancer/sdk::hash=a0565f&locator=%40scaffold-eth%2Fnextjs-app%40workspace%3Apackages%2Fnextjs-app-ts"
+  version: 0.0.2
+  resolution: "@balancer/sdk@file:.yalc/@balancer/sdk#.yalc/@balancer/sdk::hash=50df4a&locator=%40scaffold-eth%2Fnextjs-app%40workspace%3Apackages%2Fnextjs-app-ts"
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/address": ^5.7.0
@@ -355,7 +355,7 @@ __metadata:
     decimal.js-light: ^2.5.1
     graphql-request: ^5.0.0
     isomorphic-fetch: ^3.0.0
-  checksum: 1371245c6de5947d3c49df2169fd29474c72c9728009be7bfa4f01dae014fd078c68f58e07ef655b55d58a3e7e9b92ac6100d5ac14f3718151486e5a6877471e
+  checksum: c19b499ef77e78008b73a46534a2e75fc0dc1b0c6fbf18dec3fc26b0dee9c638ee9eb79d3b83eb6a4ce084f31e1d3f9f3abbf59647e8cc8a08a6ddc3e6005688
   languageName: node
   linkType: hard
 
