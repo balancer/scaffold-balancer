@@ -1,8 +1,8 @@
-import { RawPoolToken, SwapInfo } from '@balancer/sdk';
-import { Space, Tag, Tooltip, Typography } from 'antd';
+import { RawPoolToken, SwapInfo, TokenAmount } from '@balancer/sdk';
+import { Button, Space, Tag, Tooltip, Typography } from 'antd';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { formatUnits } from 'ethers/lib/utils';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { getNetworkInfo } from '~common/functions';
 import { getToken } from '~~/helpers/tokens';
@@ -17,22 +17,35 @@ interface Props {
 }
 
 export function SorSwapQueryResults({ tokens, swapInfo, swapType, tokenIn, tokenOut }: Props) {
-  const { chainId } = useEthersAppContext();
+  const { chainId, provider } = useEthersAppContext();
   const networkInfo = getNetworkInfo(chainId);
   const swapToken = swapType === 'GIVEN_OUT' ? tokenIn : tokenOut;
   const isGivenIn = swapType === 'GIVEN_IN';
+  const [isQuerying, setIsQuerying] = useState(false);
+  const [onChainAmount, setOnChainAmount] = useState<TokenAmount | null>(null);
+
+  async function queryOnChain() {
+    if (provider) {
+      setIsQuerying(true);
+      const response = await swapInfo.swap.query(provider);
+      setOnChainAmount(response);
+      setIsQuerying(false);
+    }
+  }
 
   return (
     <div style={{ marginTop: 10 }}>
       <Space direction={'vertical'} style={{ width: '100%' }}>
         <div>
-          {swapToken.symbol} {isGivenIn ? 'out' : 'in'}:{' '}
-          {formatUnits(swapInfo.quote.amount.toString(), swapToken.decimals)}
+          <div>
+            {swapToken.symbol} {isGivenIn ? 'out' : 'in'}:{' '}
+            {formatUnits(swapInfo.quote.amount.toString(), swapToken.decimals)}
+          </div>
+          <div>
+            {swapToken.symbol} {isGivenIn ? 'out' : 'in'} scaled: {swapInfo.quote.amount.toString()}
+          </div>
+          <div>Is batch swap: {swapInfo.swap.isBatchSwap ? 'true' : 'false'}</div>
         </div>
-        <div>
-          {swapToken.symbol} {isGivenIn ? 'out' : 'in'} scaled: {swapInfo.quote.amount.toString()}
-        </div>
-        <div>Is batch swap: {swapInfo.swap.isBatchSwap ? 'true' : 'false'}</div>
         <div>
           <Typography.Text strong style={{ display: 'block', marginBottom: 8 }}>
             Paths
@@ -92,6 +105,22 @@ export function SorSwapQueryResults({ tokens, swapInfo, swapType, tokenIn, token
           ))}
         </div>
       </Space>
+      <div style={{ marginTop: 12, marginBottom: 12 }}>
+        <Button type="primary" onClick={queryOnChain} loading={isQuerying}>
+          Query on chain
+        </Button>
+      </div>
+      {onChainAmount && !isQuerying && (
+        <>
+          <div>
+            {swapToken.symbol} {isGivenIn ? 'out' : 'in'}:{' '}
+            {formatUnits(onChainAmount.amount.toString(), swapToken.decimals)}
+          </div>
+          <div>
+            {swapToken.symbol} {isGivenIn ? 'out' : 'in'} scaled: {onChainAmount.amount.toString()}
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { SmartOrderRouter, SwapInfo, SwapKind, Token, TokenAmount } from '@balancer/sdk';
 import { Button, Card, Col, Empty, Row, Typography } from 'antd';
 import { useEthersAppContext } from 'eth-hooks/context';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { TokenApprovals } from '~~/components/TokenApprovals';
 import { TokenSnatch } from '~~/components/TokenSnatch';
@@ -32,7 +32,21 @@ export function SorPage() {
   const tokenIn = tokens.find((token) => token.address === tokenInAddress);
   const tokenOut = tokens.find((token) => token.address === tokenOutAddress);
   const approvalTokens = tokens.filter((token) => token.address === tokenInAddress);
-  const { chainId } = useEthersAppContext();
+  const { chainId, provider } = useEthersAppContext();
+
+  useEffect(() => {
+    if (swapInfo) {
+      setSwapInfo(null);
+    }
+  }, [
+    selectedPoolTypes.join(),
+    selectedTokens.join(),
+    selectedPools.join(),
+    swapType,
+    tokenInAddress,
+    tokenOutAddress,
+    amount,
+  ]);
 
   const filteredPools = parsedPools.filter((pool) => {
     if (selectedPools.length > 0 && selectedPools.includes(pool.id)) {
@@ -119,7 +133,6 @@ export function SorPage() {
                       customPoolFactories: [],
                     });*/
 
-                    console.log('filteredpools', filteredPools.length);
                     const result = await SmartOrderRouter.getSwapsWithPools(
                       tIn,
                       tOut,
