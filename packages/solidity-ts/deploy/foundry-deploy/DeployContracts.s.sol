@@ -3,22 +3,14 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 
-import { YourContractDeploy } from "./YourContract.deploy.s.sol";
-import { YourNFTDeploy } from "./YourNFT.deploy.s.sol";
-
-// import { YourNFT } from "contracts/yourNFT.sol";
-// import { YourContract } from "contracts/yourContract.sol";
+import { YourCustomPoolDeploy } from "./YourCustomPool.deploy.s.sol";
 
 contract DeployContracts is Script {
-  function setUp() public {}
+    function setUp() public {}
 
-  function run() public {
-    YourContractDeploy yourContractDeploy = new YourContractDeploy();
-    yourContractDeploy.setUp();
-    yourContractDeploy.run();
-
-    YourNFTDeploy yourNFTDeploy = new YourNFTDeploy();
-    yourNFTDeploy.setUp();
-    yourNFTDeploy.run();
-  }
+    function run() public {
+        YourCustomPoolDeploy yourCustomPoolDeploy = new YourCustomPoolDeploy();
+        yourCustomPoolDeploy.setUp();
+        yourCustomPoolDeploy.run();
+    }
 }
