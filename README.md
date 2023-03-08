@@ -1,12 +1,22 @@
-# 🏗 Scaffold-Eth Typescript
+# 🏗 Scaffold-Balancer
+
+> everything you need to build on Balancer! 🚀
+
+🧪 Quickly experiment with custom AMMs using a frontend that allows you to interact with your custom pool contract(s):
+
+![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
+
+🧪 Fork mainnet ethereum and test your custom pools within the context of all available liquidity.
+
+🏗 Build and test your Smart Order Router (SOR) extension, getting you one step closer to being integrated into the Balancer ecosystem.
 
 ## Features
 
-This is the typescript repo of scaffold-eth. Use scaffold-eth-typescript with:
+This project is a fork of scaffold-eth (scaffold-eth-typescript) that ...:
 
 - A react frontend running with `nextjs`.
 - Solidity toolkit of `hardhat` or `foundry`
-- It has the a command line system that allows you to choose a **react frontend** or **solidity toolkit**
+- It has a CLI system that allows you to choose a **solidity toolkit**
 
 ## Quick Start
 

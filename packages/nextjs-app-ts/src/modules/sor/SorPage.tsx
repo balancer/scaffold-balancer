@@ -48,7 +48,7 @@ export function SorPage() {
     amount,
   ]);
 
-  const filteredPools = parsedPools.filter((pool) => {
+  const filteredPools = pools.filter((pool) => {
     if (selectedPools.length > 0 && selectedPools.includes(pool.id)) {
       return true;
     }
@@ -59,7 +59,7 @@ export function SorPage() {
 
     if (
       selectedTokens.length > 0 &&
-      pool.tokens.filter((token) => selectedTokens.includes(token.token.address)).length === 0
+      pool.tokens.filter((token) => selectedTokens.includes(token.address)).length === 0
     ) {
       return false;
     }
@@ -127,18 +127,18 @@ export function SorPage() {
                     const tOut = new Token(1, tokenOut.address, tokenOut.decimals);
                     const tokenAmount = TokenAmount.fromHumanAmount(swapType === 'GIVEN_OUT' ? tOut : tIn, amount);
 
-                    /* const parsedPools = SmartOrderRouter.parseRawPools({
+                    const parsedPools = SmartOrderRouter.parseRawPools({
                       chainId: chainId || 1,
-                      pools,
+                      pools: filteredPools,
                       customPoolFactories: [],
-                    });*/
+                    });
 
                     const result = await SmartOrderRouter.getSwapsWithPools(
                       tIn,
                       tOut,
                       swapType === 'GIVEN_OUT' ? SwapKind.GivenOut : SwapKind.GivenIn,
                       tokenAmount,
-                      filteredPools
+                      parsedPools
                     );
 
                     setSwapInfo(result);
