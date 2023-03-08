@@ -4,8 +4,6 @@
 
 🧪 Quickly experiment with custom AMMs using a frontend that allows you to interact with your custom pool contract(s):
 
-![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
-
 🧪 Fork mainnet ethereum and test your custom pools within the context of all available liquidity.
 
 🏗 Build and test your Smart Order Router (SOR) extension, getting you one step closer to being integrated into the Balancer ecosystem.
