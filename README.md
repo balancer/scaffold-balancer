@@ -2,7 +2,7 @@
 
 > everything you need to build on Balancer! 🚀
 
-🧪 Quickly experiment with custom AMMs using a frontend that allows you to interact with your custom pool contract(s):
+🧪 Quickly experiment with custom AMMs using a frontend that allows you to interact with your custom pool contract(s).
 
 🧪 Fork mainnet ethereum and test your custom pools within the context of all available liquidity.
 
