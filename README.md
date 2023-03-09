@@ -10,57 +10,54 @@
 
 ## Features
 
-This project is a fork of scaffold-eth (scaffold-eth-typescript) that ...:
+This project is a fork of scaffold-eth-typescript with a focus on providing [Balancer]:
 
 - A react frontend running with `nextjs`.
 - Solidity toolkit of `hardhat` or `foundry`
-- It has a CLI system that allows you to choose a **solidity toolkit**
 
-## Quick Start
+# 🏄‍♂️ Quick Start
 
-### Fork or clone the repo
+Prerequisites: [Node (v16 LTS)](https://nodejs.org/en/download/) plus [Yarn (v1.x)](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
 
-- You can use the use the template link: [scaffold-eth-typescript template](https://github.com/scaffold-eth/scaffold-eth-typescript/generate)
-- You can clone the repo with git
-  ```bash
-  git clone https://github.com/scaffold-eth/scaffold-eth-typescript.git
-  ```
+> 1️⃣ clone/fork 🏗 scaffold-balancer:
 
-### Starting the App
+```bash
+git clone https://github.com/beethovenxfi/scaffold-balancer.git
+```
 
-Running the app
+> 2️⃣ Install all necessary dependencies
 
-1. install your dependencies, `open a new command prompt`
+```bash
+yarn install
+```
 
-   ```bash
-   yarn install
-   ```
+> 3️⃣ start your 👷‍ Hardhat fork of mainnet ethereum:
 
-2. Create a default `scaffold.config.json` configuration file
+```bash
+yarn fork
+```
 
-   ```bash
-   yarn create-config
-   ```
+> 4️⃣ in a second terminal window, start your 📱 frontend:
 
-3. start a local hardhat fork of mainnet (chain)
+```bash
+yarn dev
+```
 
-   ```bash
-   yarn fork
-   ```
+> 4️⃣ in a third terminal window, 🛰 deploy your contract:
 
-4. Run the app, `open a new command prompt terminal`
+⚠️ By default any existing contract deployments are triggerred when you start your fork of mainnet `yarn fork`. This stay may not be required.
 
-   ```bash
-   # in a new terminal
-   # compile your contracts
-   yarn compile
-   # deploy your hardhat contracts
-   yarn deploy
-   # start the react app (nextjs)
-   yarn dev
-   ```
+```bash
+yarn deploy
+```
 
-5. Open http://localhost:3000 to see your front end
+🔏 Edit your smart contract `YourCustomPool.sol` in `packages/solidity-ts/contracts`
+
+💼 Edit your contract deployment scripts in `packages/solidity-ts/deploy`
+
+📝 Edit your frontend `App.tsx` in `packages/react-app/src`
+
+📱 Open http://localhost:3000 to see the app
 
 ## Configuration
 
