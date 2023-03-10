@@ -17,7 +17,7 @@ This project is a fork of scaffold-eth-typescript with a focus on providing [Bal
 
 # 🏄‍♂️ Quick Start
 
-Prerequisites: [Node (v16 LTS)](https://nodejs.org/en/download/) plus [Yarn (v1.x)](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
+Prerequisites: [Node (v16)](https://nodejs.org/en/download/) plus [Yarn (v1.x)](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
 
 > 1️⃣ clone/fork 🏗 scaffold-balancer:
 
@@ -55,107 +55,10 @@ yarn deploy
 
 💼 Edit your contract deployment scripts in `packages/solidity-ts/deploy`
 
-📝 Edit your frontend `App.tsx` in `packages/react-app/src`
+📝 Edit your frontend in `packages/nextjs-app-ts/src`
 
-📱 Open http://localhost:3000 to see the app
+💻 Open http://localhost:3000 to see the app
 
 ## Configuration
 
-Scaffold uses `scaffold.config.json` as a configuration file located in `/packages/common/scaffold.config.json`. You can create the config file by running the command `yarn create-config`.
-
-### Command line help
-
-```bash
-use `-h` with any command for help.  e.g. yarn set-react -h
-```
-
-### Configure react and solidity toolkit
-
-You can change the configuration file to pick different frontends and solidity toolkits.
-
-```bash
-yarn set-react `nextjs`
-yarn set-solidity `hardhat` or `foundry`
-```
-
-### Target network
-
-Set your `targetNetwork` in the config. This is the network the solidity toolkit is deploying against.
-
-Set your `availableNetworks` in the config. This is the networks the frontend is available in.
-
-You can configure it from the **config file** or from **command line**.
-
-```bash
-yarn set-network -h
-yarn set-network 'localhost' 'localhost, mainnet'
-```
-
-### More commands
-
-You can see all the other commands by using `yarn scaffold`
-
-## Solidity Tookits Details
-
-### Hardhat
-
-Everything will be installed with `yarn install`.
-
-You can use hardhat with right context using
-
-```bash
-yarn hardhat
-```
-
-### Foundry
-
-Make sure you install foundry
-
-1. Make sure you install foundry first. Use `curl -L https://foundry.paradigm.xyz | bash` to install foundryup
-
-   > You can see more details here. https://book.getfoundry.sh/getting-started/installation
-
-2. Run `yarn install:foundry` to install or update foundry in the right folder. It will also run _forge install_ automatically with the right context.
-
-You can use foundry commands with the right context
-
-```bash
-yarn forge
-yarn anvil
-yarn cast
-```
-
-## Directories
-
-The directories that you'll use are:
-
-```bash
-packages/solidity-ts/
-
-And:
-packages/next-app-ts/
-```
-
-### More Info
-
-Other commands
-
-```bash
-# rebuild all contracts, incase of inconsistent state
-yarn contracts:clean
-yarn contracts:build
-# run hardhat commands for the workspace, or see all tasks
-yarn hardhat 'xxx'
-# run forge, anvil or
-yarn forge
-yarn anvil
-yarn cast
-```
-
-Other folders
-
-```bash
-# for subgraph checkout README.md in following directories
-packages/subgraph/
-packages/services/
-```
+Scaffold uses `scaffold.config.json` as a configuration file located in `/packages/common/src/scaffold.config.json`. You can create the config file by running the command `yarn create-config`.
