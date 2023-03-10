@@ -20,7 +20,7 @@ import "@balancer-labs/v2-pool-utils/contracts/BaseMinimalSwapInfoPool.sol";
 /**
  * A minimal custom Balancer pool implementing BaseMinimalSwapInfoPool.
  *
- * There are three specialization settings for Pools, allowing for cheaper swaps at the cost of reduced functionality.
+ * There are three specialization settings for Pools, to allow for cheaper swaps at the cost of reduced functionality.
  * For a break down on each specialization:
  * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/vault/IVault.sol#L198-L215
  *
@@ -41,13 +41,16 @@ import "@balancer-labs/v2-pool-utils/contracts/BaseMinimalSwapInfoPool.sol";
  * https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/pool-stable/contracts/ComposableStablePool.sol#L237-L277
  * https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/pool-linear/contracts/LinearPool.sol#L319-L333
  *
- * For joining and exiting the pool, there are three functions that need to be implemented: _onInitializePool, _onJoinPool,
- * _onExitPool, with an optional recovery mode exit defined as _doRecoveryModeExit. To allow for flexibility in how your
- * custom pool manages joins and exits, balancer pools support a field called userData that can contain arbitrary abi encoded
- * data specific to your pool implementation. The unofficial standard is that the first field in the userData is a unit8
- * representing some enum value. Refer to the user data implementations for weighted and stable pools:
+ * For joining and exiting, there are four functions that need to be implemented: _onInitializePool, _onJoinPool,
+ * _onExitPool, and _doRecoveryModeExit. To allow for flexibility in how your custom pool manages joins and exits,
+ * balancer pools support a field called userData that can contain arbitrary abi encoded data specific to your pool implementation.
+ * The unofficial standard is that the first field in the userData is a unit8 representing some enum value. Refer to the
+ * user data implementations for weighted and stable pools:
  * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/pool-weighted/WeightedPoolUserData.sol
  * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/pool-stable/StablePoolUserData.sol
+ *
+ * _doRecoveryModeExit should implement a minimal proportional exit as it is only callable when a pool is in recovery mode.
+ * No complex code or external calls should be made _doRecoveryModeExit.
  *
  * Outside of the expectation of a uint8 as the first value, the userData is fully customizable for your specific use case.
  * userData is also supported on both _onSwapGivenIn and _onSwapGivenOut, allowing you to require additional metadata when
