@@ -17,6 +17,42 @@ pragma experimental ABIEncoderV2;
 
 import "@balancer-labs/v2-pool-utils/contracts/BaseMinimalSwapInfoPool.sol";
 
+/**
+ * A minimal custom Balancer pool implementing BaseMinimalSwapInfoPool.
+ *
+ * There are three specialization settings for Pools, allowing for cheaper swaps at the cost of reduced functionality.
+ * For a break down on each specialization:
+ * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/vault/IVault.sol#L198-L215
+ *
+ * By implementing BaseMinimalSwapInfoPool, we signal that we are implementing either the MinimalSwapInfo or TwoToken specialization:
+ * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/vault/IMinimalSwapInfoPool.sol#L4
+ *
+ * If we wanted to implement the General specialization (ie: no optimizations), we would likely implement BaseGeneralPool
+ * instead of BaseMinimalSwapInfoPool.
+ * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/pool-utils/contracts/BaseGeneralPool.sol
+ *
+ * Defining your pricing function within the scope of balancer involves the implementation of two functions,
+ * _onSwapGivenIn and _onSwapGivenOut. Both functions have been implemented minimally in this contract, with full
+ * descriptions of each function available in the comments above the implementation.
+ *
+ * You can reference how _onSwapGivenIn and _onSwapGivenOut have been implemented for the WeightedPool,
+ * ComposableStablePool and LinearPool below:
+ * https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/pool-weighted/contracts/BaseWeightedPool.sol#L107-L135
+ * https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/pool-stable/contracts/ComposableStablePool.sol#L237-L277
+ * https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/pool-linear/contracts/LinearPool.sol#L319-L333
+ *
+ * For joining and exiting the pool, there are three functions that need to be implemented: _onInitializePool, _onJoinPool,
+ * _onExitPool, with an optional recovery mode exit defined as _doRecoveryModeExit. To allow for flexibility in how your
+ * custom pool manages joins and exits, balancer pools support a field called userData that can contain arbitrary abi encoded
+ * data specific to your pool implementation. The unofficial standard is that the first field in the userData is a unit8
+ * representing some enum value. Refer to the user data implementations for weighted and stable pools:
+ * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/pool-weighted/WeightedPoolUserData.sol
+ * https://github.com/balancer/balancer-v2-monorepo/blob/master/pkg/interfaces/contracts/pool-stable/StablePoolUserData.sol
+ *
+ * Outside of the expectation of a uint8 as the first value, the userData is fully customizable for your specific use case.
+ * userData is also supported on both _onSwapGivenIn and _onSwapGivenOut, allowing you to require additional metadata when
+ * implementing your swap functionality.
+ */
 contract YourCustomPool is BaseMinimalSwapInfoPool {
     using FixedPoint for uint256;
 
