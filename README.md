@@ -13,7 +13,7 @@
 This project is a fork of scaffold-eth-typescript with a focus on providing [Balancer]:
 
 - A react frontend running with `nextjs`.
-- Solidity toolkit of `hardhat` or `foundry`
+- Solidity toolkit
 
 # 🏄‍♂️ Quick Start
 
