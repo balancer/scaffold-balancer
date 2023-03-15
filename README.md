@@ -58,7 +58,3 @@ yarn deploy
 📝 Edit your frontend in `packages/nextjs-app-ts/src`
 
 💻 Open http://localhost:3000 to see the app
-
-## Configuration
-
-Scaffold uses `scaffold.config.json` as a configuration file located in `/packages/common/src/scaffold.config.json`. You can create the config file by running the command `yarn create-config`.
