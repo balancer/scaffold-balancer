@@ -10,10 +10,13 @@
 
 ## Features
 
-This project is a fork of scaffold-eth-typescript with a focus on providing [Balancer]:
+This project is a fork of [scaffold-eth-typescript](https://github.com/scaffold-eth/scaffold-eth-typescript) with a focus on providing tools to enable fast
+development of custom AMMs built on balancer. Write your contract, deploy it locally, and immediately have an interface to start to interact with the
+pool (swap/join/exit) both in isolation and in the context of all available balancer vault liquidity.
 
-- A react frontend running with `nextjs`.
-- Solidity toolkit
+- Pool Contracts UI - This helper UI allows you to interact directly with any (custom or existing) pool contract in real time.
+- Smart order router (SOR) playground - See how your custom pool stacks up against available balancer liquidity via the SOR playground.
+- Batch Swap - A UI for building arbitrarily complex batch swaps.
 
 # 🏄‍♂️ Quick Start
 
