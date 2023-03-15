@@ -2,15 +2,17 @@ import { Button, Input } from 'antd';
 import { isAddress } from 'ethers/lib/utils';
 import React, { useState } from 'react';
 
-import { PoolContract } from '~~/modules/pool/PoolContract';
+import { PoolContract } from '~~/modules/pool/components/PoolContract';
+import { PoolHeader } from '~~/modules/pool/components/PoolHeader';
 
-export function PoolContractList() {
+export function PoolList() {
   const [inputText, setInputText] = useState<string>('');
   const [poolContracts, setPoolContracts] = useState<string[]>([]);
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 18, marginRight: 18 }}>
+    <div style={{ marginTop: 24, marginLeft: 18, marginRight: 18, paddingBottom: 120 }}>
+      <PoolHeader />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 18 }}>
         <Input
           value={inputText}
           onChange={(e): void => {

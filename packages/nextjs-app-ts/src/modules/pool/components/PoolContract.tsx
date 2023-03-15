@@ -4,11 +4,11 @@ import { FC } from 'react';
 
 import { TokenSnatch } from '~~/components/TokenSnatch';
 import { useTokenBalances } from '~~/hooks/useTokenBalances';
+import { PoolApproveAssetsForm } from '~~/modules/pool/components/PoolApproveAssetsForm';
+import { PoolContractExitForm } from '~~/modules/pool/components/PoolContractExitForm';
+import { PoolContractJoinForm } from '~~/modules/pool/components/PoolContractJoinForm';
+import { PoolContractSwapForm } from '~~/modules/pool/components/PoolContractSwapForm';
 import { usePoolData } from '~~/modules/pool/hooks/usePoolData';
-import { PoolApproveAssetsForm } from '~~/modules/pool/PoolApproveAssetsForm';
-import { PoolContractExitForm } from '~~/modules/pool/PoolContractExitForm';
-import { PoolContractJoinForm } from '~~/modules/pool/PoolContractJoinForm';
-import { PoolContractSwapForm } from '~~/modules/pool/PoolContractSwapForm';
 
 interface Props {
   address: string;

@@ -23,7 +23,7 @@ import {
 import { useScaffoldHooksExamples } from '~~/hooks/useScaffoldHooksExamples';
 import { TAppProps } from '~~/models/TAppProps';
 import { BatchSwapPage } from '~~/modules/batchswap/BatchSwapPage';
-import { PoolContractList } from '~~/modules/pool/PoolContractList';
+import { PoolList } from '~~/modules/pool/PoolList';
 import { SorPage } from '~~/modules/sor/SorPage';
 
 /** ********************************
@@ -128,9 +128,9 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
   // This is the list of tabs and their contents
   const pageList: TContractPageList = {
     mainPage: {
-      name: 'CustomPools',
-      title: 'Custom Pools',
-      content: <PoolContractList />,
+      name: 'Pools',
+      title: 'Pools',
+      content: <PoolList />,
     },
     pages: [
       {
