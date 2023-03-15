@@ -25,7 +25,7 @@ Prerequisites: [Node (v16)](https://nodejs.org/en/download/) plus [Yarn (v1.x)](
 > 1️⃣ clone/fork 🏗 scaffold-balancer:
 
 ```bash
-git clone https://github.com/beethovenxfi/scaffold-balancer.git
+git clone https://github.com/balancer/scaffold-balancer.git
 ```
 
 > 2️⃣ Install all necessary dependencies
