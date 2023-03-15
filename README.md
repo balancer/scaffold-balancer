@@ -48,7 +48,7 @@ yarn dev
 
 > 4️⃣ in a third terminal window, 🛰 deploy your contract:
 
-⚠️ By default any existing contract deployments are triggerred when you start your fork of mainnet `yarn fork`. This stay may not be required.
+⚠️ By default any existing contract deployments are triggerred when you start your fork of mainnet `yarn fork`.
 
 ```bash
 yarn deploy
