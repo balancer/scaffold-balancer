@@ -127,7 +127,6 @@ contract YourCustomPool is BaseMinimalSwapInfoPool {
      * The 1e7 figure is the result of 2**256 / (1e18 * 1e18 * 2**112).
      */
     function _scalingFactor(IERC20 token) internal view virtual override returns (uint256) {
-        // prettier-ignore
         if (token == _token0) {
             return _scalingFactor0;
         } else if (token == _token1) {
