@@ -31,25 +31,45 @@ git clone https://github.com/beethovenxfi/scaffold-balancer.git
 yarn install
 ```
 
-> 3️⃣ start your 👷‍ Hardhat fork of mainnet ethereum:
+> 3️⃣ Create scaffold config
+
+```bash
+yarn create-config
+```
+
+> 4️⃣ Create Mnemonics for contract deployments
+
+```bash
+yarn generate && yarn account
+```
+
+> 5️⃣ start your 👷‍ Hardhat fork of mainnet ethereum:
 
 ```bash
 yarn fork
 ```
 
-> 4️⃣ in a second terminal window, start your 📱 frontend:
+> 6️⃣ in a second terminal window, 🛰 deploy your contract:
+
+⚠️Including deploys on `yarn fork` sometimes causes gas price issues. So, deployments are disabled and should be done separately.
+
+```bash
+yarn deploy
+```
+
+> 7️⃣ in a third terminal window, generate frontend files for deployed contracts:
+
+```bash
+yarn contracts:build
+```
+
+> 8️⃣ start your 📱 frontend:
 
 ```bash
 yarn dev
 ```
 
-> 4️⃣ in a third terminal window, 🛰 deploy your contract:
 
-⚠️ By default any existing contract deployments are triggerred when you start your fork of mainnet `yarn fork`. This stay may not be required.
-
-```bash
-yarn deploy
-```
 
 🔏 Edit your smart contract `YourCustomPool.sol` in `packages/solidity-ts/contracts`
 
