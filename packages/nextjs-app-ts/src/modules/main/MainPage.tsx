@@ -3,7 +3,7 @@ import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 import { NextPage } from 'next';
-import { ReactElement } from 'react';
+import {ReactElement, useMemo} from 'react';
 
 import { MainPageFooter, MainPageHeader, createTabsAndPages, TContractPageList } from '.';
 
@@ -25,6 +25,8 @@ import { TAppProps } from '~~/models/TAppProps';
 import { BatchSwapPage } from '~~/modules/batchswap/BatchSwapPage';
 import { PoolContractList } from '~~/modules/pool/PoolContractList';
 import { SorPage } from '~~/modules/sor/SorPage';
+import {MpcExamples} from "~~/modules/mpc-examples/MpcExamples";
+import {GenericContract} from "eth-components/ant";
 
 /** ********************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -87,7 +89,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
   // 🎉 Console logs & More hook examples:
   // 🚦 disable this hook to stop console logs
   // 🏹🏹🏹 go here to see how to use hooks!
-  useScaffoldHooksExamples(scaffoldAppProviders);
+  // useScaffoldHooksExamples(scaffoldAppProviders);
 
   // -----------------------------
   // These are the contracts!
@@ -143,6 +145,14 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
         title: 'Batch Swap',
         content: <BatchSwapPage scaffoldAppProviders={scaffoldAppProviders} />,
       },
+      {
+        name: 'MpcExamples',
+        title: 'MPC Examples',
+        content: <MpcExamples
+          ethersAppContext={ethersAppContext}
+          scaffoldAppProviders={scaffoldAppProviders}
+        />
+      }
     ],
   };
   const { tabMenu, pages } = createTabsAndPages(pageList);

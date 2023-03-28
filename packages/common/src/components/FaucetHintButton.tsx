@@ -74,7 +74,7 @@ export const FaucetHintButton: FC<IFaucetButton> = (props) => {
               if (faucetTx && ethersAppContext?.account != null) {
                 faucetTx({
                   to: ethersAppContext?.account,
-                  value: parseEther('0.01').toHexString(),
+                  value: parseEther('1').toHexString(),
                 })
                   .then(() => setFaucetClicked(true))
                   .catch(() => setFaucetClicked(false));
