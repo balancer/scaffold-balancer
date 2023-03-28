@@ -57,13 +57,13 @@ yarn fork
 yarn deploy
 ```
 
-> 7️⃣ in a third terminal window, generate frontend files for deployed contracts:
+> 7️⃣ generate frontend files for deployed contracts:
 
 ```bash
 yarn contracts:build
 ```
 
-> 8️⃣ start your 📱 frontend:
+> 8️⃣ in a third terminal window, start your 📱 frontend:
 
 ```bash
 yarn dev
