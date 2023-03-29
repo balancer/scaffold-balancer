@@ -3,7 +3,7 @@ import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 import { NextPage } from 'next';
-import {ReactElement, useMemo} from 'react';
+import { ReactElement } from 'react';
 
 import { MainPageFooter, MainPageHeader, createTabsAndPages, TContractPageList } from '.';
 
@@ -20,13 +20,11 @@ import {
   INFURA_ID,
   BURNER_FALLBACK_ENABLED,
 } from '~~/config/nextjsApp.config';
-import { useScaffoldHooksExamples } from '~~/hooks/useScaffoldHooksExamples';
 import { TAppProps } from '~~/models/TAppProps';
 import { BatchSwapPage } from '~~/modules/batchswap/BatchSwapPage';
+import { MpcExamples } from '~~/modules/mpc-examples/MpcExamples';
 import { PoolContractList } from '~~/modules/pool/PoolContractList';
 import { SorPage } from '~~/modules/sor/SorPage';
-import {MpcExamples} from "~~/modules/mpc-examples/MpcExamples";
-import {GenericContract} from "eth-components/ant";
 
 /** ********************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -148,11 +146,8 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
       {
         name: 'MpcExamples',
         title: 'MPC Examples',
-        content: <MpcExamples
-          ethersAppContext={ethersAppContext}
-          scaffoldAppProviders={scaffoldAppProviders}
-        />
-      }
+        content: <MpcExamples ethersAppContext={ethersAppContext} scaffoldAppProviders={scaffoldAppProviders} />,
+      },
     ],
   };
   const { tabMenu, pages } = createTabsAndPages(pageList);

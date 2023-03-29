@@ -1,18 +1,18 @@
-import {FC, useEffect, useMemo, useState} from "react";
-import { GenericContract } from "eth-components/ant"
-import {IEthersContext} from 'eth-hooks/context';
+import { Button, Select } from 'antd';
+import { GenericContract } from 'eth-components/ant';
 import { useEventListener } from 'eth-hooks';
-import {Button, Select} from 'antd';
+import { IEthersContext } from 'eth-hooks/context';
+import { cloneDeep } from 'lodash';
+import { FC, useEffect, useMemo, useState } from 'react';
 
+import { useAppContracts, useContractsAppStore } from '~common/components/context';
 import { IScaffoldAppProviders } from '~common/models';
-import {useAppContracts, useContractsAppStore} from '~common/components/context';
-import {cloneDeep} from "lodash";
 
 export const ExampleController: FC<IExampleController> = ({
   controllerContractName,
   controllerFactoryContractName,
   ethersAppContext,
-  scaffoldAppProviders
+  scaffoldAppProviders,
 }) => {
   const store = useContractsAppStore();
   const { chainId, signer } = ethersAppContext;
@@ -21,26 +21,32 @@ export const ExampleController: FC<IExampleController> = ({
 
   const [updateStore, setUpdateStore] = useState(false);
 
-  const exampleControllerContract = useAppContracts(controllerContractName, ethersAppContext.chainId)
-  const exampleControllerFactoryContract = useAppContracts(controllerFactoryContractName, ethersAppContext.chainId)
+  const exampleControllerContract = useAppContracts(controllerContractName, ethersAppContext.chainId);
+  const exampleControllerFactoryContract = useAppContracts(controllerFactoryContractName, ethersAppContext.chainId);
 
   const exampleControllerFactoryAddress = exampleControllerFactoryContract?.address;
   const events = useEventListener(exampleControllerFactoryContract, 'ControllerCreated');
   const exampleControllerAddresses = useMemo(() => {
-    return events[0].map(event => {
+    return events[0].map((event) => {
       const data = event.data;
       const topics = event.topics;
       const decodedData = event.decode(data, topics);
       return decodedData.controller;
-    })
-  }, [events?.[0]?.length])
+    });
+  }, [events?.[0]?.length]);
 
   useEffect(() => {
     if (!chosenControllerAddress) return;
 
     const newState = cloneDeep(store.contractState);
-    const controllerContract = newState.contractConnectors[controllerContractName].connect(chosenControllerAddress, signer);
-    const newFactoryContract = newState.contractConnectors[controllerFactoryContractName].connect(exampleControllerFactoryAddress, signer);
+    const controllerContract = newState.contractConnectors[controllerContractName].connect(
+      chosenControllerAddress,
+      signer
+    );
+    const newFactoryContract = newState.contractConnectors[controllerFactoryContractName].connect(
+      exampleControllerFactoryAddress,
+      signer
+    );
     newState.contractConnectors[controllerContractName].config[chainId].address = chosenControllerAddress;
     newState.contractsByName[controllerContractName][chainId] = controllerContract;
     newState.contractsByName[controllerFactoryContractName][chainId] = newFactoryContract;
@@ -49,77 +55,75 @@ export const ExampleController: FC<IExampleController> = ({
 
     setTimeout(() => {
       setUpdateStore(true);
-    }, 1)
-  }, [chosenControllerAddress])
+    }, 1);
+  }, [chosenControllerAddress]);
 
+  // Gives some time to store so that states are updated before updating contracts
   useEffect(() => {
-    const connectNewContract = async () => {
-      await store.connectToContract(controllerContractName, scaffoldAppProviders.mainnetAdaptor);
-      await store.connectToAllContracts(scaffoldAppProviders.mainnetAdaptor);
-    }
+    if (!updateStore) return;
 
-    if (updateStore) {
-      connectNewContract();
-      setUpdateStore(false);
-    }
+    store.connectToContract(controllerContractName, scaffoldAppProviders.mainnetAdaptor);
+    store.connectToAllContracts(scaffoldAppProviders.mainnetAdaptor);
+    setUpdateStore(false);
   }, [updateStore]);
 
   const chooseFactory = () => {
     setChosenContract(controllerFactoryContractName);
-  }
+  };
 
   const handleChangeController = (controllerAddress: string) => {
     setChosenContract(controllerContractName);
     setChosenControllerAddress(controllerAddress);
-  }
+  };
 
-  const selectOptions = exampleControllerAddresses.map(address => ({
+  const selectOptions = exampleControllerAddresses.map((address) => ({
     label: address,
-    value: address
+    value: address,
   }));
 
-  return <div className={'example-controller-container'}>
-    <div className={'deployed-contracts'}>
-      <div className={'deployed-contracts-row'}>
-        <div className={'spacer'}/>
-        <div className={'title'}>Factory: </div>
-        <div className={'addresses'}>
-          <Button type={'primary'} onClick={chooseFactory}>
-            {exampleControllerFactoryAddress}
-          </Button>
+  return (
+    <div className={'example-controller-container'}>
+      <div className={'deployed-contracts'}>
+        <div className={'deployed-contracts-row'}>
+          <div className={'spacer'} />
+          <div className={'title'}>Factory: </div>
+          <div className={'addresses'}>
+            <Button type={'primary'} onClick={chooseFactory}>
+              {exampleControllerFactoryAddress}
+            </Button>
+          </div>
+          <div className={'spacer'} />
         </div>
-        <div className={'spacer'}/>
-      </div>
-      <div className={'deployed-contracts-row'}>
-        <div className={'spacer'}/>
-        <div className={'title'}>Created Controllers: </div>
-        <div className={'addresses'}>
-          <Select
-            defaultValue=""
-            style={{ width: 300 }}
-            onChange={handleChangeController}
-            options={selectOptions}
-          />
+        <div className={'deployed-contracts-row'}>
+          <div className={'spacer'} />
+          <div className={'title'}>Created Controllers: </div>
+          <div className={'addresses'}>
+            <Select defaultValue="" style={{ width: 300 }} onChange={handleChangeController} options={selectOptions} />
+          </div>
+          <div className={'spacer'} />
         </div>
-        <div className={'spacer'}/>
       </div>
+
+      {chosenContract && chosenContract === controllerFactoryContractName && (
+        <GenericContract
+          contractName={controllerFactoryContractName}
+          contract={exampleControllerFactoryContract}
+          mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
+          blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}
+        />
+      )}
+
+      {chosenContract && chosenContract === controllerContractName && (
+        <GenericContract
+          contractName={controllerContractName}
+          contract={exampleControllerContract}
+          mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
+          blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}
+        />
+      )}
     </div>
-
-    {chosenContract && chosenContract === controllerFactoryContractName && <GenericContract
-      contractName={controllerFactoryContractName}
-      contract={exampleControllerFactoryContract}
-      mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-      blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}
-    /> }
-
-    {chosenContract && chosenContract === controllerContractName && <GenericContract
-      contractName={controllerContractName}
-      contract={exampleControllerContract}
-      mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-      blockExplorer={scaffoldAppProviders.currentTargetNetwork.blockExplorer}
-    /> }
-  </div>
-}
+  );
+};
 
 interface IExampleController {
   controllerContractName: string;

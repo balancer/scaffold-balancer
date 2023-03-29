@@ -1,5 +1,4 @@
 import {
-  createConnectorForExternalAbi,
   createConnectorForExternalContract,
   createConnectorForFoundryContract,
   createConnectorForHardhatContract,
@@ -35,27 +34,27 @@ export const appContractsConfig = () => {
       NullControllerFactory:
         scaffoldConfig.build.solidityToolkit === 'hardhat'
           ? createConnectorForHardhatContract(
-            'NullControllerFactory',
-            toolkitContracts.NullControllerFactory__factory,
-            hardhatDeployedContractsJson
-          )
+              'NullControllerFactory',
+              toolkitContracts.NullControllerFactory__factory,
+              hardhatDeployedContractsJson
+            )
           : createConnectorForFoundryContract(
-            'NullControllerFactory',
-            toolkitContracts.NullControllerFactory__factory,
-            foundryDeployedContractsJson
-          ),
+              'NullControllerFactory',
+              toolkitContracts.NullControllerFactory__factory,
+              foundryDeployedContractsJson
+            ),
       NullController:
         scaffoldConfig.build.solidityToolkit === 'hardhat'
           ? createConnectorForHardhatContract(
-            'NullController',
-            toolkitContracts.NullController__factory,
-            hardhatDeployedContractsJson
-          )
+              'NullController',
+              toolkitContracts.NullController__factory,
+              hardhatDeployedContractsJson
+            )
           : createConnectorForFoundryContract(
-            'NullController',
-            toolkitContracts.NullController__factory,
-            foundryDeployedContractsJson
-          ),
+              'NullController',
+              toolkitContracts.NullController__factory,
+              foundryDeployedContractsJson
+            ),
       YourCustomPool:
         scaffoldConfig.build.solidityToolkit === 'hardhat'
           ? createConnectorForHardhatContract(
