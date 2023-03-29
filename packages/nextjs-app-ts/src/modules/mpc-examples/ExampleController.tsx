@@ -105,7 +105,7 @@ export const ExampleController: FC<IExampleController> = ({
         </div>
         <div className={'deployed-contracts-row'}>
           <div className={'spacer'} />
-          <div className={'title'}>Created Controllers: </div>
+          <div className={'title'}>Created Controllers ({exampleControllerAddresses.length}): </div>
           <div className={'addresses'}>
             <Select defaultValue="" style={{ width: 300 }} onChange={handleChangeController} options={selectOptions} />
           </div>
