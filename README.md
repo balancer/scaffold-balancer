@@ -69,8 +69,6 @@ yarn contracts:build
 yarn dev
 ```
 
-
-
 🔏 Edit your smart contract `YourCustomPool.sol` in `packages/solidity-ts/contracts`
 
 💼 Edit your contract deployment scripts in `packages/solidity-ts/deploy`

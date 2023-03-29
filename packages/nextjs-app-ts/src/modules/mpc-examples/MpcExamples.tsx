@@ -1,11 +1,8 @@
-import {FC, useMemo, useState} from "react";
-import { GenericContract } from "eth-components/ant"
+import {FC, useState} from "react";
 import { IEthersContext } from 'eth-hooks/context';
-import { useEventListener } from 'eth-hooks';
-import { cloneDeep } from 'lodash';
+import { Select } from 'antd';
 
 import { IScaffoldAppProviders } from '~common/models';
-import { useAppContracts } from '~common/components/context';
 import {ExampleController} from "~~/modules/mpc-examples/ExampleController";
 
 export const MpcExamples: FC<IMpcExamples> = ({
@@ -19,21 +16,43 @@ export const MpcExamples: FC<IMpcExamples> = ({
     controllerFactoryContract: 'NullControllerFactory'
   }]
 
-  const selectContract = (selectedContract: IExampleContract) => () => {
-    setSelectedExample(selectedContract);
-  }
+  const selectOptions = exampleContracts.map(contract => ({
+    value: contract.controllerContract,
+    label: contract.controllerContract
+  }));
+
+  const handleChange = (value: string) => {
+    const selectedContract = exampleContracts.find(contract => contract.controllerContract === value);
+    if (selectedContract) {
+      setSelectedExample(selectedContract);
+    }
+  };
 
   return <div className={'mpc-examples-container'}>
-    <div className={'examples-menu'}>
-      {exampleContracts.map(contract => <button onClick={selectContract(contract)}>{contract.controllerContract}</button>)}
+    <div className={'choose-controller-container'}>
+      <div className={'spacer'}/>
+      <div className={'choose-controller'}>
+        <div className={'choose-controller-title'}>Choose a controller: </div>
+        <div className={'choose-controller-dropdown'}>
+          <Select
+            defaultValue=""
+            style={{ width: 300 }}
+            onChange={handleChange}
+            options={selectOptions}
+          />
+        </div>
+      </div>
+      <div className={'spacer'}/>
     </div>
-    <div className={'examples-page'}>
+    <div className={'mpc-examples-page'}>
+      <div className={'spacer'}/>
       {selectedExample && <ExampleController
         controllerContractName={selectedExample?.controllerContract}
         controllerFactoryContractName={selectedExample?.controllerFactoryContract}
         ethersAppContext={ethersAppContext}
         scaffoldAppProviders={scaffoldAppProviders}
       />}
+      <div className={'spacer'}/>
     </div>
   </div>;
 }

@@ -2,6 +2,7 @@ import {FC, useEffect, useMemo, useState} from "react";
 import { GenericContract } from "eth-components/ant"
 import {IEthersContext} from 'eth-hooks/context';
 import { useEventListener } from 'eth-hooks';
+import {Button, Select} from 'antd';
 
 import { IScaffoldAppProviders } from '~common/models';
 import {useAppContracts, useContractsAppStore} from '~common/components/context';
@@ -14,7 +15,6 @@ export const ExampleController: FC<IExampleController> = ({
   scaffoldAppProviders
 }) => {
   const store = useContractsAppStore();
-  console.log(store);
   const { chainId, signer } = ethersAppContext;
   const [chosenContract, setChosenContract] = useState();
   const [chosenControllerAddress, setChosenControllerAddress] = useState();
@@ -26,7 +26,6 @@ export const ExampleController: FC<IExampleController> = ({
 
   const exampleControllerFactoryAddress = exampleControllerFactoryContract?.address;
   const events = useEventListener(exampleControllerFactoryContract, 'ControllerCreated');
-  console.log(events);
   const exampleControllerAddresses = useMemo(() => {
     return events[0].map(event => {
       const data = event.data;
@@ -69,20 +68,40 @@ export const ExampleController: FC<IExampleController> = ({
     setChosenContract(controllerFactoryContractName);
   }
 
-  const chooseController = (controllerAddress: string) => () => {
+  const handleChangeController = (controllerAddress: string) => {
     setChosenContract(controllerContractName);
     setChosenControllerAddress(controllerAddress);
   }
 
+  const selectOptions = exampleControllerAddresses.map(address => ({
+    label: address,
+    value: address
+  }));
+
   return <div className={'example-controller-container'}>
     <div className={'deployed-contracts'}>
-      <div className={'deployed-factory-row'}>
+      <div className={'deployed-contracts-row'}>
+        <div className={'spacer'}/>
         <div className={'title'}>Factory: </div>
-        <div className={'addresses'}><button onClick={chooseFactory}>{exampleControllerFactoryAddress}</button></div>
+        <div className={'addresses'}>
+          <Button type={'primary'} onClick={chooseFactory}>
+            {exampleControllerFactoryAddress}
+          </Button>
+        </div>
+        <div className={'spacer'}/>
       </div>
-      <div className={'deployed-controllers-row'}>
-        <div>Created controllers: </div>
-        <div>{exampleControllerAddresses.map(address => <button onClick={chooseController(address)}>{address}</button>)}</div>
+      <div className={'deployed-contracts-row'}>
+        <div className={'spacer'}/>
+        <div className={'title'}>Created Controllers: </div>
+        <div className={'addresses'}>
+          <Select
+            defaultValue=""
+            style={{ width: 300 }}
+            onChange={handleChangeController}
+            options={selectOptions}
+          />
+        </div>
+        <div className={'spacer'}/>
       </div>
     </div>
 
