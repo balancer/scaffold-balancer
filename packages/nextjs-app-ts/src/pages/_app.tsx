@@ -1,5 +1,6 @@
 import '~~/styles/tailwind.css';
 import '~~/styles/globals.css';
+import '~~/styles/mpc-controller.css';
 
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';

@@ -20,9 +20,10 @@ import {
   INFURA_ID,
   BURNER_FALLBACK_ENABLED,
 } from '~~/config/nextjsApp.config';
-import { useScaffoldHooksExamples } from '~~/hooks/useScaffoldHooksExamples';
 import { TAppProps } from '~~/models/TAppProps';
 import { BatchSwapPage } from '~~/modules/batchswap/BatchSwapPage';
+import { MpcExamples } from '~~/modules/mpc-examples/MpcExamples';
+import { PoolContractList } from '~~/modules/pool/PoolContractList';
 import { PoolList } from '~~/modules/pool/PoolList';
 import { SorPage } from '~~/modules/sor/SorPage';
 
@@ -87,7 +88,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
   // 🎉 Console logs & More hook examples:
   // 🚦 disable this hook to stop console logs
   // 🏹🏹🏹 go here to see how to use hooks!
-  useScaffoldHooksExamples(scaffoldAppProviders);
+  // useScaffoldHooksExamples(scaffoldAppProviders);
 
   // -----------------------------
   // These are the contracts!
@@ -142,6 +143,11 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
         name: 'BatchSwap',
         title: 'Batch Swap',
         content: <BatchSwapPage scaffoldAppProviders={scaffoldAppProviders} />,
+      },
+      {
+        name: 'MpcExamples',
+        title: 'MPC Examples',
+        content: <MpcExamples ethersAppContext={ethersAppContext} scaffoldAppProviders={scaffoldAppProviders} />,
       },
     ],
   };

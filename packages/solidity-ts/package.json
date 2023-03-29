@@ -5,7 +5,7 @@
   "scripts": {
     "chain:hardhat": "cross-env BUILDING=true hardhat node --network hardhat --no-deploy",
     "chain:foundry": "anvil",
-    "fork:hardhat": "cross-env hardhat node --network hardhat --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad",
+    "fork:hardhat": "cross-env hardhat node --network hardhat --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad --no-deploy",
     "test:hardhat": "yarn hardhat test --network hardhat",
     "compile:foundry": "yarn exec forge build",
     "compile:foundry:post": "yarn ts-node scripts/foundryPostCompile.ts",
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@atixlabs/hardhat-time-n-mine": "^0.0.5",
+    "@balancer-labs/v2-interfaces": "^0.1.0",
     "@balancer-labs/v2-pool-utils": "^3.1.2",
     "@balancer-labs/v2-solidity-utils": "^3.0.2",
     "@defi-wonderland/smock": "^2.3.0",
@@ -44,7 +45,7 @@
     "@ethersproject/units": "^5.7.0",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@nomiclabs/hardhat-solhint": "^2.0.1",
-    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts": "^3.4.2-solc-0.7",
     "@openzeppelin/hardhat-upgrades": "^1.20.0",
     "@primitivefi/hardhat-dodoc": "^0.2.3",
     "@scaffold-eth/common": "0.0.0",
