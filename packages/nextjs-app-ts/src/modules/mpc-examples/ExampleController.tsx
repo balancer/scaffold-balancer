@@ -39,17 +39,28 @@ export const ExampleController: FC<IExampleController> = ({
     if (!chosenControllerAddress) return;
 
     const newState = cloneDeep(store.contractState);
-    const controllerContract = newState.contractConnectors[controllerContractName].connect(
+    const contractNames = Object.keys(newState.contractConnectors);
+
+    // Refreshing all contracts, since cloneDeep removes event listeners
+    for (const contractName of contractNames) {
+      const contractAddress = newState.contractConnectors[contractName].config[chainId].address;
+      const newContract = newState.contractConnectors[contractName].connect(
+        contractAddress,
+        signer
+      );
+      newState.contractsByName[contractName][chainId] = newContract;
+    }
+
+    // Recreating controller contract with selected address, to show correct information and call the
+    // correct contract in the frontend
+    const newControllerContract = newState.contractConnectors[controllerContractName].connect(
       chosenControllerAddress,
       signer
     );
-    const newFactoryContract = newState.contractConnectors[controllerFactoryContractName].connect(
-      exampleControllerFactoryAddress,
-      signer
-    );
     newState.contractConnectors[controllerContractName].config[chainId].address = chosenControllerAddress;
-    newState.contractsByName[controllerContractName][chainId] = controllerContract;
-    newState.contractsByName[controllerFactoryContractName][chainId] = newFactoryContract;
+    newState.contractsByName[controllerContractName][chainId] = newControllerContract;
+
+    // contractsByChainId are recreated by "connectToAllContracts"
     delete newState.contractsByChainId;
     store.setContractState(newState);
 
@@ -58,11 +69,9 @@ export const ExampleController: FC<IExampleController> = ({
     }, 1);
   }, [chosenControllerAddress]);
 
-  // Gives some time to store so that states are updated before updating contracts
+  // Separating connectToAllContracts from setContractState to make sure states are updated before updating contracts
   useEffect(() => {
     if (!updateStore) return;
-
-    store.connectToContract(controllerContractName, scaffoldAppProviders.mainnetAdaptor);
     store.connectToAllContracts(scaffoldAppProviders.mainnetAdaptor);
     setUpdateStore(false);
   }, [updateStore]);
