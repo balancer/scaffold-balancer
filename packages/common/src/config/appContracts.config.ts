@@ -1,5 +1,4 @@
 import {
-  createConnectorForExternalAbi,
   createConnectorForExternalContract,
   createConnectorForFoundryContract,
   createConnectorForHardhatContract,
@@ -32,32 +31,30 @@ export const appContractsConfig = () => {
       // --------------------------------------------------
       // 🙋🏽‍♂️ Contracts examples either using hardhat or foundry
       // --------------------------------------------------
-      YourContract:
+      NullControllerFactory:
         scaffoldConfig.build.solidityToolkit === 'hardhat'
           ? createConnectorForHardhatContract(
-              'YourContract',
-              toolkitContracts.YourContract__factory,
+              'NullControllerFactory',
+              toolkitContracts.NullControllerFactory__factory,
               hardhatDeployedContractsJson
             )
           : createConnectorForFoundryContract(
-              'YourContract',
-              toolkitContracts.YourContract__factory,
+              'NullControllerFactory',
+              toolkitContracts.NullControllerFactory__factory,
               foundryDeployedContractsJson
             ),
-
-      YourNFT:
+      NullController:
         scaffoldConfig.build.solidityToolkit === 'hardhat'
           ? createConnectorForHardhatContract(
-              'YourNFT',
-              toolkitContracts.YourNFT__factory,
+              'NullController',
+              toolkitContracts.NullController__factory,
               hardhatDeployedContractsJson
             )
           : createConnectorForFoundryContract(
-              'YourNFT',
-              toolkitContracts.YourNFT__factory,
+              'NullController',
+              toolkitContracts.NullController__factory,
               foundryDeployedContractsJson
             ),
-
       YourCustomPool:
         scaffoldConfig.build.solidityToolkit === 'hardhat'
           ? createConnectorForHardhatContract(
@@ -85,16 +82,16 @@ export const appContractsConfig = () => {
       // --------------------------------------------------
       // 🙋🏽‍♂️ Add your external abi here (unverified contracts)`
       // --------------------------------------------------
-      YourContractFromAbi: createConnectorForExternalAbi(
-        'YourContract',
-        {
-          [1235]: {
-            address: 'xxx',
-          },
-        },
-        toolkitContracts.YourContract__factory.abi
-        // optional if you have a connect function:  externalContracts.YourContract__factory.connect
-      ),
+      // YourContractFromAbi: createConnectorForExternalAbi(
+      //   'YourContract',
+      //   {
+      //     [1235]: {
+      //       address: 'xxx',
+      //     },
+      //   },
+      //   toolkitContracts.YourContract__factory.abi
+      //   // optional if you have a connect function:  externalContracts.YourContract__factory.connect
+      // ),
     } as const;
 
     return result;
