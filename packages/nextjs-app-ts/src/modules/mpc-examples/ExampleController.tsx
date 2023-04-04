@@ -78,6 +78,7 @@ export const ExampleController: FC<IExampleController> = ({
 
   const chooseFactory = () => {
     setChosenContract(controllerFactoryContractName);
+    setChosenControllerAddress(undefined);
   };
 
   const handleChangeController = (controllerAddress: string) => {
@@ -107,7 +108,7 @@ export const ExampleController: FC<IExampleController> = ({
           <div className={'spacer'} />
           <div className={'title'}>Created Controllers ({exampleControllerAddresses.length}): </div>
           <div className={'addresses'}>
-            <Select defaultValue="" style={{ width: 300 }} onChange={handleChangeController} options={selectOptions} />
+            <Select value={chosenControllerAddress} style={{ width: 300 }} onChange={handleChangeController} options={selectOptions} />
           </div>
           <div className={'spacer'} />
         </div>
