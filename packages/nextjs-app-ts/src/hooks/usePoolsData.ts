@@ -1,4 +1,4 @@
-import { BasePool, GetPoolsResponse, RawPool, SmartOrderRouter, SubgraphPoolProvider } from '@balancer/sdk';
+import { BasePool, GetPoolsResponse, RawPool, SubgraphPoolProvider, sorParseRawPools } from '@balancer/sdk';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 
@@ -27,19 +27,17 @@ export function usePoolsData() {
           gqlAdditionalPoolQueryFields: 'name symbol totalLiquidity',
         }
       );
-      const timestamp = Math.floor(new Date().getTime() / 1000);
+      const timestamp = BigInt(Math.floor(new Date().getTime() / 1000));
 
       const response = (await subgraphPoolProvider.getPools({ timestamp })) as GetPoolsResponseExtended;
+
       const orderedPools = _.orderBy(response.pools, (pool) => parseFloat(pool.totalLiquidity), 'desc');
 
       return {
         ...response,
         pools: orderedPools,
-        parsedPools: SmartOrderRouter.parseRawPools({
-          chainId: forkedChainId,
-          pools: orderedPools,
-          customPoolFactories: [], // TODO: add custom factories here
-        }),
+        // TODO: add custom factories here
+        parsedPools: sorParseRawPools(forkedChainId, orderedPools, []),
       };
     },
     { enabled: !!forkedNetworkInfo && !!forkedNetworkInfo.balancer }

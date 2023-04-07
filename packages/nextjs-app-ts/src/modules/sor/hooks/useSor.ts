@@ -1,4 +1,4 @@
-import { BasePool, OnChainPoolDataEnricher, SmartOrderRouter, SubgraphPoolProvider } from '@balancer/sdk';
+import { BasePool, OnChainPoolDataEnricher, SmartOrderRouter, SubgraphPoolProvider, Address } from '@balancer/sdk';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { useEffect, useRef } from 'react';
 import { useQuery } from 'react-query';
@@ -14,17 +14,19 @@ export function useSor() {
 
   useEffect(() => {
     if (provider && chainId && networkInfo && forkedNetworkInfo) {
-      const subgraphPoolProvider = new SubgraphPoolProvider(forkedNetworkInfo.balancer?.subgraphUrl || '');
+      const subgraphPoolProvider = new SubgraphPoolProvider(
+        forkedChainId,
+        forkedNetworkInfo.balancer?.subgraphUrl || ''
+      );
       // The onchain enricher is fetching from the local rpc url, so we want this to always fetch the latest.
       const onchainEnricher = new OnChainPoolDataEnricher(
         networkInfo?.rpcUrl || '',
-        forkedNetworkInfo?.balancer?.sorQueriesAddress || '',
+        (forkedNetworkInfo?.balancer?.sorQueriesAddress || '') as Address,
         { loadTokenBalances: 'all' }
       );
 
       sor.current = new SmartOrderRouter({
         chainId: forkedChainId,
-        provider,
         rpcUrl: networkInfo.rpcUrl,
         poolDataProviders: subgraphPoolProvider,
         poolDataEnrichers: onchainEnricher,
