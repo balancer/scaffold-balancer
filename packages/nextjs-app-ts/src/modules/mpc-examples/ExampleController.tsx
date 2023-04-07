@@ -44,10 +44,7 @@ export const ExampleController: FC<IExampleController> = ({
     // Refreshing all contracts, since cloneDeep removes event listeners
     for (const contractName of contractNames) {
       const contractAddress = newState.contractConnectors[contractName].config[chainId].address;
-      const newContract = newState.contractConnectors[contractName].connect(
-        contractAddress,
-        signer
-      );
+      const newContract = newState.contractConnectors[contractName].connect(contractAddress, signer);
       newState.contractsByName[contractName][chainId] = newContract;
     }
 

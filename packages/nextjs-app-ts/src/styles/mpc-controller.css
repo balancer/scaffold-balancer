@@ -1,58 +1,57 @@
 .mpc-examples-container {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .choose-controller-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    margin: 20px auto;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin: 20px auto;
 }
 
 .spacer {
-    flex: 1;
+  flex: 1;
 }
 
 .choose-controller {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .choose-controller-title {
-    font-weight: bold;
-    margin-right: 10px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 .mpc-examples-page {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    flex: 1;
-    position: relative;
-    margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex: 1;
+  position: relative;
+  margin: 0 auto;
 }
 
 .example-controller-container {
-    width: 100%;
-    margin: 0 20px;
+  width: 100%;
+  margin: 0 20px;
 }
 
 .deployed-contracts {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .deployed-contracts-row {
-    display: flex;
-    flex-direction: row;
-    margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
 }
 
 .deployed-contracts-row > .title {
-    padding-right: 10px;
+  padding-right: 10px;
 }
 
 .deployed-contracts-row > .addresses {
-
 }

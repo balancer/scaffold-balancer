@@ -23,7 +23,6 @@ import {
 import { TAppProps } from '~~/models/TAppProps';
 import { BatchSwapPage } from '~~/modules/batchswap/BatchSwapPage';
 import { MpcExamples } from '~~/modules/mpc-examples/MpcExamples';
-import { PoolContractList } from '~~/modules/pool/PoolContractList';
 import { PoolList } from '~~/modules/pool/PoolList';
 import { SorPage } from '~~/modules/sor/SorPage';
 
