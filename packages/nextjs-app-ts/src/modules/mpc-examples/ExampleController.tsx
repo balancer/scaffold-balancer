@@ -7,6 +7,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 
 import { useAppContracts, useContractsAppStore } from '~common/components/context';
 import { IScaffoldAppProviders } from '~common/models';
+import { BalancerGenericContract } from '~~/components/balancer-eth-components/balancer-generic-contract/BalancerGenericContract';
 
 export const ExampleController: FC<IExampleController> = ({
   controllerContractName,
@@ -39,6 +40,7 @@ export const ExampleController: FC<IExampleController> = ({
     if (!chosenControllerAddress) return;
 
     const newState = cloneDeep(store.contractState);
+    if (!newState) return;
     const contractNames = Object.keys(newState.contractConnectors);
 
     // Refreshing all contracts, since cloneDeep removes event listeners
@@ -105,14 +107,19 @@ export const ExampleController: FC<IExampleController> = ({
           <div className={'spacer'} />
           <div className={'title'}>Created Controllers ({exampleControllerAddresses.length}): </div>
           <div className={'addresses'}>
-            <Select value={chosenControllerAddress} style={{ width: 300 }} onChange={handleChangeController} options={selectOptions} />
+            <Select
+              value={chosenControllerAddress}
+              style={{ width: 300 }}
+              onChange={handleChangeController}
+              options={selectOptions}
+            />
           </div>
           <div className={'spacer'} />
         </div>
       </div>
 
       {chosenContract && chosenContract === controllerFactoryContractName && (
-        <GenericContract
+        <BalancerGenericContract
           contractName={controllerFactoryContractName}
           contract={exampleControllerFactoryContract}
           mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
