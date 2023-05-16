@@ -1,5 +1,5 @@
 import { BaseContract } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getButtonText, getContractFunctionInterface, hasInput, isReadFunction } from './BalancerFunction.helpers';
 import { IBalancerFunction } from './IBalancerFunction';
@@ -9,8 +9,7 @@ export const useBalancerFunction = ({ contract, functionName }: IBalancerFunctio
 
   const contractFunction = contract?.functions[functionName];
   const contractFunctionInterface = getContractFunctionInterface({ contract, functionName });
-
-  const buttonText = useMemo(() => getButtonText(contractFunctionInterface), [contractFunctionInterface]);
+  const inputs = contractFunctionInterface?.inputs;
 
   useEffect(() => {
     const loadFunctionValue = async () => {
@@ -24,7 +23,8 @@ export const useBalancerFunction = ({ contract, functionName }: IBalancerFunctio
   }, [contractFunction, contractFunctionInterface]);
 
   return {
-    buttonText,
+    buttonText: getButtonText(contractFunctionInterface),
     functionValue,
+    inputs,
   };
 };
