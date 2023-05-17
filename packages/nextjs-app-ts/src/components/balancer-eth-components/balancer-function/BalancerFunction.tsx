@@ -1,6 +1,6 @@
 import { Button, Collapse } from 'antd';
 import { BaseContract } from 'ethers';
-import { FC, useContext, useState } from 'react';
+import { FC, useState } from 'react';
 
 import { useBalancerFunction } from '../balancer-function/BalancerFunction.hook';
 import { BalancerInput } from '../balancer-input/BalancerInput';
@@ -12,8 +12,6 @@ const { Panel } = Collapse;
 
 const BalancerFunctionWithContext: FC<IBalancerFunction<BaseContract>> = ({ contract, functionName }) => {
   const { buttonText, functionValue, inputs } = useBalancerFunction({ contract, functionName });
-
-  const { inputValues } = useContext(BalancerFunctionContext);
 
   return (
     <div className={'balancer-function-container'}>
@@ -28,7 +26,7 @@ const BalancerFunctionWithContext: FC<IBalancerFunction<BaseContract>> = ({ cont
             <Button type={'primary'}>{buttonText}</Button>
           </div>
           <div className={'balancer-function-value-container'}>
-            <p>Value: {functionValue}</p>
+            <p>Value: {JSON.stringify(functionValue)}</p>
           </div>
         </Panel>
       </Collapse>

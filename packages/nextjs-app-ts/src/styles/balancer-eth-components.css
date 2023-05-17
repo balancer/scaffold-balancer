@@ -3,6 +3,7 @@
   width: 100%;
   max-width: 1200px;
   margin-top: 20px;
+  margin-bottom: 200px;
 }
 
 .balancer-generic-contract-header {
@@ -28,14 +29,32 @@
 }
 
 .balancer-tuple-title {
-  font-weight: bold;
   margin-bottom: 5px !important;
 }
 
 .balancer-tuple-inputs-container {
-  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 2px solid #EEEEEE;
 }
 
 .balancer-input-container {
   margin-bottom: 10px;
+}
+
+.balancer-array-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.balancer-array-input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.balancer-array-button {
+  margin-top: 22px;
+}
+
+.balancer-array-button:last-child {
+  margin-left: 5px;
 }

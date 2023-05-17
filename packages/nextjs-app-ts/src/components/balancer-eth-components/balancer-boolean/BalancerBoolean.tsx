@@ -25,7 +25,7 @@ export const BalancerBoolean: FC<IBalancerBoolean> = ({ input, inputIndex }) => 
   return (
     <div className={'balancer-input-container'}>
       <div className={'balancer-input-title'}>{title}</div>
-      <div className={'balancer-input-element'}>
+      <div className={'balancer-input-element-boolean'}>
         <Checkbox onChange={onInputChange} value={currentValue}>
           {input.name}
         </Checkbox>
