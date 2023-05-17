@@ -1,3 +1,4 @@
+import '~~/styles/balancer-eth-components.css';
 import '~~/styles/tailwind.css';
 import '~~/styles/globals.css';
 import '~~/styles/mpc-controller.css';

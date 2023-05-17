@@ -1,19 +1,20 @@
-import { Input } from 'antd';
+import { Checkbox } from 'antd';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import * as _ from 'lodash';
-import { ChangeEvent, FC, useContext } from 'react';
+import { FC, useContext } from 'react';
 
 import { BalancerFunctionContext } from '../balancer-function/BalancerFunction.context';
 
-import { IBalancerText } from './IBalancerText';
+import { IBalancerBoolean } from './IBalancerBoolean';
 
-export const BalancerText: FC<IBalancerText> = ({ input, inputIndex }) => {
+export const BalancerBoolean: FC<IBalancerBoolean> = ({ input, inputIndex }) => {
   const { inputValues, setInputValues } = useContext(BalancerFunctionContext);
 
   const title = input.name ? `${input.name} (${input.type})` : input.type;
-  const currentValue = _.get(inputValues, inputIndex) as unknown as string;
+  const currentValue = _.get(inputValues, inputIndex) as unknown as boolean;
 
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const onInputChange = (event: CheckboxChangeEvent) => {
+    const value = event.target.checked;
     setInputValues((oldInputValues) => {
       const newInputValues = [...oldInputValues];
       _.set(newInputValues, inputIndex, value);
@@ -25,7 +26,9 @@ export const BalancerText: FC<IBalancerText> = ({ input, inputIndex }) => {
     <div className={'balancer-input-container'}>
       <div className={'balancer-input-title'}>{title}</div>
       <div className={'balancer-input-element'}>
-        <Input placeholder={title} onChange={onInputChange} value={currentValue} />
+        <Checkbox onChange={onInputChange} value={currentValue}>
+          {input.name}
+        </Checkbox>
       </div>
     </div>
   );

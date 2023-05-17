@@ -16,9 +16,9 @@ const BalancerFunctionWithContext: FC<IBalancerFunction<BaseContract>> = ({ cont
   const { inputValues } = useContext(BalancerFunctionContext);
 
   return (
-    <Collapse>
-      <Panel header={functionName} key={functionName}>
-        <div className={'balancer-function-container'}>
+    <div className={'balancer-function-container'}>
+      <Collapse>
+        <Panel header={functionName} key={functionName}>
           <div className={'balancer-function-inputs-container'}>
             {inputs?.map((input, index) => (
               <BalancerInput input={input} inputIndex={[index]} key={input.name} />
@@ -28,13 +28,11 @@ const BalancerFunctionWithContext: FC<IBalancerFunction<BaseContract>> = ({ cont
             <Button type={'primary'}>{buttonText}</Button>
           </div>
           <div className={'balancer-function-value-container'}>
-            <p>
-              {functionValue} {inputValues}
-            </p>
+            <p>Value: {functionValue}</p>
           </div>
-        </div>
-      </Panel>
-    </Collapse>
+        </Panel>
+      </Collapse>
+    </div>
   );
 };
 
