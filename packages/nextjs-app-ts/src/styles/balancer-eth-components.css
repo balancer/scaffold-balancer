@@ -7,11 +7,28 @@
 }
 
 .balancer-generic-contract-header {
+  display: flex;
+  flex-direction: row;
   font-size: 16px;
   font-weight: bold;
   border-bottom: 1px solid #eeeeee;
   padding-bottom: 5px;
   margin-bottom: 16px;
+}
+
+.balancer-generic-contract-name {
+  flex: 1;
+}
+
+.balancer-copy-icon {
+  color: #1890ff !important;
+  font-size: 20px;
+  margin-left: 5px;
+}
+
+.balancer-copy-icon:hover {
+  cursor: pointer;
+  color: #40a9ff !important;
 }
 
 .balancer-function-container {
