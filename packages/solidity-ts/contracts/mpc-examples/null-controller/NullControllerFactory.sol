@@ -75,7 +75,7 @@ contract NullControllerFactory is Ownable {
      */
     function create(MinimalPoolParams memory minimalParams) external {
         require(!isDisabled, "Controller factory disabled");
-        console.log('Factory address: ', address(managedPoolFactory));
+        console.log("Factory address: ", address(managedPoolFactory));
         require(!IManagedPoolFactory(managedPoolFactory).isDisabled(), "Pool factory disabled");
 
         bytes32 controllerSalt = bytes32(_nextControllerSalt);
@@ -94,34 +94,40 @@ contract NullControllerFactory is Ownable {
             assetManagers[i] = expectedControllerAddress;
         }
 
-        // Populate IManagedPoolFactory.NewPoolParams with arguments from MinimalPoolParams and
+        // Populate IManagedPoolFactory.ManagedPoolParams with arguments from MinimalPoolParams and
         // other arguments that this factory provides itself.
-        IManagedPoolFactory.NewPoolParams memory fullParams;
-        fullParams.name = minimalParams.name;
-        fullParams.symbol = minimalParams.symbol;
-        fullParams.tokens = minimalParams.tokens;
-        fullParams.normalizedWeights = minimalParams.normalizedWeights;
-        // Asset Managers set to the controller address, not known by deployer until creation.
-        fullParams.assetManagers = assetManagers;
-        fullParams.swapFeePercentage = minimalParams.swapFeePercentage;
-        fullParams.swapEnabledOnStart = minimalParams.swapEnabledOnStart;
-        // Factory enforces public LPs for MPs with NullController.
-        fullParams.mustAllowlistLPs = false;
-        fullParams.managementAumFeePercentage = minimalParams.managementAumFeePercentage;
-        fullParams.aumFeeId = minimalParams.aumFeeId;
+        IManagedPoolFactory.ManagedPoolParams memory poolParams;
 
-        IManagedPool pool = IManagedPool(
-            IManagedPoolFactory(managedPoolFactory).create(fullParams, expectedControllerAddress)
-        );
+        poolParams.name = minimalParams.name;
+        poolParams.symbol = minimalParams.symbol;
+        // Asset Managers set to the controller address, not known by deployer until creation.
+        poolParams.assetManagers = assetManagers;
+
+        // Populate IManagedPoolFactory.ManagedPoolSettingsParams with arguments from MinimalPoolParams and
+        // other arguments that this factory provides itself.
+        IManagedPoolFactory.ManagedPoolSettingsParams memory settingsParams;
+        settingsParams.tokens = minimalParams.tokens;
+        settingsParams.normalizedWeights = minimalParams.normalizedWeights;
+        settingsParams.swapFeePercentage = minimalParams.swapFeePercentage;
+        settingsParams.swapEnabledOnStart = minimalParams.swapEnabledOnStart;
+        // Factory enforces public LPs for MPs with NullController.
+        settingsParams.mustAllowlistLPs = false;
+        settingsParams.managementAumFeePercentage = minimalParams.managementAumFeePercentage;
+        settingsParams.aumFeeId = minimalParams.aumFeeId;
+
+        bytes32 poolSalt = bytes32(_nextControllerSalt);
+        _nextControllerSalt += 1;
+
+        IManagedPool pool = IManagedPool(IManagedPoolFactory(managedPoolFactory).create(poolParams, settingsParams, expectedControllerAddress, poolSalt));
         _lastCreatedPool = address(pool);
-        console.log('Managed Pool Deployed! Address: ', _lastCreatedPool);
+        console.log("Managed Pool Deployed! Address: ", _lastCreatedPool);
 
         address actualControllerAddress = Create2.deploy(0, controllerSalt, controllerCreationCode);
         require(expectedControllerAddress == actualControllerAddress, "Deploy failed");
 
         // Log controller locally.
         isControllerFromFactory[actualControllerAddress] = true;
-        console.log('Controller Deployed! Address: ', actualControllerAddress);
+        console.log("Controller Deployed! Address: ", actualControllerAddress);
         // Log controller publicly.
         emit ControllerCreated(actualControllerAddress, pool.getPoolId());
     }
