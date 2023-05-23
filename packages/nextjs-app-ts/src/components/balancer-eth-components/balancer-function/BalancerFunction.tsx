@@ -11,23 +11,31 @@ import { IBalancerFunction } from './IBalancerFunction';
 const { Panel } = Collapse;
 
 const BalancerFunctionWithContext: FC<IBalancerFunction<BaseContract>> = ({ contract, functionName }) => {
-  const { buttonText, functionValue, inputs } = useBalancerFunction({ contract, functionName });
+  const { buttonText, errorMessage, functionValue, inputs, onButtonClick } = useBalancerFunction({
+    contract,
+    functionName,
+  });
 
   return (
     <div className={'balancer-function-container'}>
       <Collapse>
         <Panel header={functionName} key={functionName}>
+          {errorMessage !== '' && <div className={'balancer-function-error'}>{errorMessage}</div>}
           <div className={'balancer-function-inputs-container'}>
             {inputs?.map((input, index) => (
               <BalancerInput input={input} inputIndex={[index]} key={input.name} />
             ))}
           </div>
           <div className={'balancer-function-button-container'}>
-            <Button type={'primary'}>{buttonText}</Button>
+            <Button type={'primary'} onClick={onButtonClick}>
+              {buttonText}
+            </Button>
           </div>
-          <div className={'balancer-function-value-container'}>
-            <p>Value: {JSON.stringify(functionValue)}</p>
-          </div>
+          {functionValue && (
+            <div className={'balancer-function-value-container'}>
+              <p>Value: {JSON.stringify(functionValue)}</p>
+            </div>
+          )}
         </Panel>
       </Collapse>
     </div>

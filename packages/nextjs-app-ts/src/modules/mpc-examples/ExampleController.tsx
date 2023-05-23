@@ -1,5 +1,4 @@
 import { Button, Select } from 'antd';
-import { GenericContract } from 'eth-components/ant';
 import { useEventListener } from 'eth-hooks';
 import { IEthersContext } from 'eth-hooks/context';
 import { cloneDeep } from 'lodash';
@@ -128,7 +127,7 @@ export const ExampleController: FC<IExampleController> = ({
       )}
 
       {chosenContract && chosenContract === controllerContractName && (
-        <GenericContract
+        <BalancerGenericContract
           contractName={controllerContractName}
           contract={exampleControllerContract}
           mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}

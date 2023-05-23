@@ -23,3 +23,25 @@ export const getButtonText = (contractFunctionInterface: FunctionFragment | unde
   if (isReadFunction(contractFunctionInterface)) return hasInput(contractFunctionInterface) ? 'Query' : 'Refresh';
   return 'Write';
 };
+
+export const extractErrorReasonFromMessage = (rawErrorMessage: string) => {
+  const jsonBegin = rawErrorMessage.indexOf('{');
+  let jsonEnd = 0;
+  let openedBrackets = 1;
+  for (let i = jsonBegin + 1; i < rawErrorMessage.length; i++) {
+    const currentChar = rawErrorMessage.charAt(i);
+    if (currentChar === '{') {
+      openedBrackets++;
+    } else if (currentChar === '}') {
+      openedBrackets--;
+    }
+    if (openedBrackets <= 0) {
+      jsonEnd = i + 1;
+      break;
+    }
+  }
+  const jsonMessage: { reason: string } = JSON.parse(rawErrorMessage.substring(jsonBegin, jsonEnd)) as {
+    reason: string;
+  };
+  return jsonMessage.reason;
+};

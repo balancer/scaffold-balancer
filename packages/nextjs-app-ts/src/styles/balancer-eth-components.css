@@ -75,3 +75,8 @@
 .balancer-array-button:last-child {
   margin-left: 5px;
 }
+
+.balancer-function-error {
+  color: #d5222b;
+  font-weight: bold;
+}

@@ -1,10 +1,20 @@
 import { BaseContract } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import { getButtonText, getContractFunctionInterface, hasInput, isReadFunction } from './BalancerFunction.helpers';
+import { BalancerFunctionContext } from './BalancerFunction.context';
+import {
+  extractErrorReasonFromMessage,
+  getButtonText,
+  getContractFunctionInterface,
+  hasInput,
+  isReadFunction,
+} from './BalancerFunction.helpers';
 import { IBalancerFunction } from './IBalancerFunction';
 
 export const useBalancerFunction = ({ contract, functionName }: IBalancerFunction<BaseContract>) => {
+  const { inputValues } = useContext(BalancerFunctionContext);
+
+  const [errorMessage, setErrorMessage] = useState('');
   const [functionValue, setFunctionValue] = useState('');
 
   const contractFunction = contract?.functions[functionName];
@@ -22,9 +32,22 @@ export const useBalancerFunction = ({ contract, functionName }: IBalancerFunctio
     loadFunctionValue().catch((err) => console.log(err));
   }, [contractFunction, contractFunctionInterface]);
 
+  const onButtonClick = async () => {
+    if (!contractFunction) return;
+    try {
+      setErrorMessage('');
+      return setFunctionValue(await contractFunction(...inputValues));
+    } catch (e) {
+      const message = e.message as string;
+      setErrorMessage(extractErrorReasonFromMessage(message));
+    }
+  };
+
   return {
     buttonText: getButtonText(contractFunctionInterface),
+    errorMessage,
     functionValue,
     inputs,
+    onButtonClick,
   };
 };

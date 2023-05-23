@@ -22,6 +22,8 @@ export const BalancerBoolean: FC<IBalancerBoolean> = ({ input, inputIndex }) => 
     });
   };
 
+  console.log('Here!');
+
   return (
     <div className={'balancer-input-container'}>
       <div className={'balancer-input-title'}>{title}</div>

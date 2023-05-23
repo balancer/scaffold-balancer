@@ -17,6 +17,7 @@ export const BalancerBaseInput: FC<IBalancerBaseInput> = ({ input, inputIndex })
   } else if (input.type === 'bool') {
     return <BalancerBoolean input={input} inputIndex={inputIndex} />;
   } else {
+    return <>INPUT {input.type} NOT IMPLEMENTED</>;
   }
 
   return (
