@@ -24,8 +24,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IManagedPoolFactory.sol";
 import "./NullController.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title NullControllerFactory
  * @notice Factory for a Managed Pool and NullController.
@@ -75,7 +73,6 @@ contract NullControllerFactory is Ownable {
      */
     function create(MinimalPoolParams memory minimalParams) external {
         require(!isDisabled, "Controller factory disabled");
-        console.log("Factory address: ", address(managedPoolFactory));
         require(!IManagedPoolFactory(managedPoolFactory).isDisabled(), "Pool factory disabled");
 
         bytes32 controllerSalt = bytes32(_nextControllerSalt);
@@ -120,14 +117,12 @@ contract NullControllerFactory is Ownable {
 
         IManagedPool pool = IManagedPool(IManagedPoolFactory(managedPoolFactory).create(poolParams, settingsParams, expectedControllerAddress, poolSalt));
         _lastCreatedPool = address(pool);
-        console.log("Managed Pool Deployed! Address: ", _lastCreatedPool);
 
         address actualControllerAddress = Create2.deploy(0, controllerSalt, controllerCreationCode);
         require(expectedControllerAddress == actualControllerAddress, "Deploy failed");
 
         // Log controller locally.
         isControllerFromFactory[actualControllerAddress] = true;
-        console.log("Controller Deployed! Address: ", actualControllerAddress);
         // Log controller publicly.
         emit ControllerCreated(actualControllerAddress, pool.getPoolId());
     }
