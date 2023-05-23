@@ -24,8 +24,13 @@ export const getButtonText = (contractFunctionInterface: FunctionFragment | unde
   return 'Write';
 };
 
-export const extractErrorReasonFromMessage = (rawErrorMessage: string) => {
+export const extractErrorReasonFromError = (errorObject: any) => {
+  const rawErrorMessage = errorObject.message as string;
   const jsonBegin = rawErrorMessage.indexOf('{');
+  if (jsonBegin < 0) {
+    console.log(errorObject);
+    return 'Check console for error details.';
+  }
   let jsonEnd = 0;
   let openedBrackets = 1;
   for (let i = jsonBegin + 1; i < rawErrorMessage.length; i++) {

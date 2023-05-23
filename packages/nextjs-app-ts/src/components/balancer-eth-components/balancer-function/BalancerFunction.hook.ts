@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { BalancerFunctionContext } from './BalancerFunction.context';
 import {
-  extractErrorReasonFromMessage,
+  extractErrorReasonFromError,
   getButtonText,
   getContractFunctionInterface,
   hasInput,
@@ -33,13 +33,13 @@ export const useBalancerFunction = ({ contract, functionName }: IBalancerFunctio
   }, [contractFunction, contractFunctionInterface]);
 
   const onButtonClick = async () => {
+    console.log(JSON.stringify(inputValues));
     if (!contractFunction) return;
     try {
       setErrorMessage('');
       return setFunctionValue(await contractFunction(...inputValues));
     } catch (e) {
-      const message = e.message as string;
-      setErrorMessage(extractErrorReasonFromMessage(message));
+      setErrorMessage(extractErrorReasonFromError(e));
     }
   };
 

@@ -7,9 +7,6 @@ import { BalancerCopyIcon } from '~~/components/balancer-eth-components/balancer
 import { BalancerFunction } from '~~/components/balancer-eth-components/balancer-function/BalancerFunction';
 
 export const BalancerGenericContract: FC<IBalancerGenericContract<BaseContract>> = ({ contract, contractName }) => {
-  // Todo remove this (Only debugging purposes)
-  console.log(contract);
-
   const contractAddress = contract?.address;
 
   return (

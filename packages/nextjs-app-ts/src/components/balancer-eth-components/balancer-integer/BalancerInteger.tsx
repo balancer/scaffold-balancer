@@ -1,29 +1,11 @@
 import { Input } from 'antd';
-import * as _ from 'lodash';
-import { ChangeEvent, FC, useContext } from 'react';
+import { FC } from 'react';
 
-import { BalancerFunctionContext } from '../balancer-function/BalancerFunction.context';
-
+import { useBalancerInteger } from './BalancerInteger.hook';
 import { IBalancerInteger } from './IBalancerInteger';
 
-export const BalancerInteger: FC<IBalancerInteger> = ({ input, inputIndex }) => {
-  const { inputValues, setInputValues } = useContext(BalancerFunctionContext);
-
-  const title = input.name ? `${input.name} (${input.type})` : input.type;
-  const currentValue = _.get(inputValues, inputIndex) as unknown as number;
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value: inputValue } = e.target;
-    // Only accept digits
-    const reg = /^[0-9]*$/;
-    if (reg.test(inputValue) || inputValue === '') {
-      setInputValues((oldInputValues) => {
-        const newInputValues = [...oldInputValues];
-        _.set(newInputValues, inputIndex, parseInt(inputValue));
-        return newInputValues;
-      });
-    }
-  };
+export const BalancerInteger: FC<IBalancerInteger> = (props) => {
+  const { currentValue, handleChange, title } = useBalancerInteger(props);
 
   return (
     <div className={'balancer-input-container'}>

@@ -19,11 +19,4 @@ export const BalancerBaseInput: FC<IBalancerBaseInput> = ({ input, inputIndex })
   } else {
     return <>INPUT {input.type} NOT IMPLEMENTED</>;
   }
-
-  return (
-    <>
-      {input.name ? `${input.name} (${input.type})` : input.type}
-      <br />
-    </>
-  );
 };
