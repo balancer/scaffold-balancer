@@ -24,17 +24,29 @@ export const getButtonText = (contractFunctionInterface: FunctionFragment | unde
   return 'Write';
 };
 
-export const extractErrorReasonFromError = (errorObject: any) => {
-  const rawErrorMessage = errorObject.message as string;
-  const jsonBegin = rawErrorMessage.indexOf('{');
+const exportJsonFromText = ({
+  firstChar = 0,
+  text,
+}: {
+  firstChar: number;
+  text: string;
+}): {
+  jsonObject: any;
+  jsonBegin: number;
+  jsonEnd: number;
+} => {
+  const jsonBegin = text.indexOf('{', firstChar);
   if (jsonBegin < 0) {
-    console.log(errorObject);
-    return 'Check console for error details.';
+    return {
+      jsonObject: undefined,
+      jsonBegin: -1,
+      jsonEnd: -1,
+    };
   }
   let jsonEnd = 0;
   let openedBrackets = 1;
-  for (let i = jsonBegin + 1; i < rawErrorMessage.length; i++) {
-    const currentChar = rawErrorMessage.charAt(i);
+  for (let i = jsonBegin + 1; i < text.length; i++) {
+    const currentChar = text.charAt(i);
     if (currentChar === '{') {
       openedBrackets++;
     } else if (currentChar === '}') {
@@ -45,8 +57,39 @@ export const extractErrorReasonFromError = (errorObject: any) => {
       break;
     }
   }
-  const jsonMessage: { reason: string } = JSON.parse(rawErrorMessage.substring(jsonBegin, jsonEnd)) as {
-    reason: string;
+  return {
+    jsonObject: JSON.parse(text.substring(jsonBegin, jsonEnd)),
+    jsonBegin,
+    jsonEnd,
   };
-  return jsonMessage.reason;
+};
+
+const exportJsonListFromText = (text: string) => {
+  const jsonList = [];
+  for (let firstChar = 0; firstChar < text.length; firstChar++) {
+    const { jsonObject, jsonEnd } = exportJsonFromText({ firstChar, text });
+    if (jsonEnd === -1) {
+      break;
+    }
+    firstChar = jsonEnd;
+    jsonList.push(jsonObject);
+  }
+  return jsonList;
+};
+
+export const extractErrorReasonFromError = (errorObject: any) => {
+  const rawErrorMessage = errorObject.message as string;
+  const jsonList = exportJsonListFromText(rawErrorMessage);
+
+  for (let i = 0; i < jsonList.length; i++) {
+    const jsonObject = jsonList[i];
+    if (jsonObject.reason) {
+      return jsonObject.reason;
+    } else if (jsonObject.message === 'Internal JSON-RPC error.') {
+      return jsonObject.data.message;
+    }
+  }
+
+  console.log(errorObject);
+  return 'Check console for error details.';
 };

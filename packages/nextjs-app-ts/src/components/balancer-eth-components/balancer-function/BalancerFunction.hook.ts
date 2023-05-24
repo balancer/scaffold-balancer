@@ -33,7 +33,6 @@ export const useBalancerFunction = ({ contract, functionName }: IBalancerFunctio
   }, [contractFunction, contractFunctionInterface]);
 
   const onButtonClick = async () => {
-    console.log(JSON.stringify(inputValues));
     if (!contractFunction) return;
     try {
       setErrorMessage('');
