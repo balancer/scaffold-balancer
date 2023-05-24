@@ -24,5 +24,14 @@ export const useBalancerInteger = ({ input, inputIndex }: IBalancerInteger) => {
     }
   };
 
-  return { currentValue, handleChange, title };
+  const addZeroes = (numberOfZeroes: number) => {
+    setInputValues((oldInputValues) => {
+      const newInputValues = [...oldInputValues];
+      const currentValue = _.get(newInputValues, inputIndex) as unknown as number;
+      _.set(newInputValues, inputIndex, `${currentValue || 1}${'0'.repeat(numberOfZeroes)}`);
+      return newInputValues;
+    });
+  };
+
+  return { addZeroes, currentValue, handleChange, title };
 };

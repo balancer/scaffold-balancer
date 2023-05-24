@@ -80,3 +80,8 @@
   color: #d5222b;
   font-weight: bold;
 }
+
+.balancer-zero-button {
+  margin-left: 5px;
+  margin-bottom: 2px;
+}

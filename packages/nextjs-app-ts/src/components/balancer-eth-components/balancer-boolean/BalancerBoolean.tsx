@@ -12,7 +12,7 @@ export const BalancerBoolean: FC<IBalancerBoolean> = (props) => {
     <div className={'balancer-input-container'}>
       <div className={'balancer-input-title'}>{title}</div>
       <div className={'balancer-input-element-boolean'}>
-        <Checkbox onChange={onInputChange} value={currentValue}>
+        <Checkbox onChange={onInputChange} checked={currentValue}>
           {input.name}
         </Checkbox>
       </div>
