@@ -66,6 +66,7 @@ const exportJsonFromText = ({
 
 const exportJsonListFromText = (text: string) => {
   const jsonList = [];
+  // Using for instead of while to make sure no infinite loop will happen
   for (let firstChar = 0; firstChar < text.length; firstChar++) {
     const { jsonObject, jsonEnd } = exportJsonFromText({ firstChar, text });
     if (jsonEnd === -1) {
