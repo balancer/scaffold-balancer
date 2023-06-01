@@ -6,7 +6,7 @@ import { THardhatRuntimeEnvironmentExtended } from 'helpers/types/THardhatRuntim
 import * as expectEvent from '../../helpers/functions/expectEvent';
 
 const vaultAddressMainnet = '0xBA12222222228d8Ba445958a75a0704d566BF2C8';
-const managedPoolAddressMainnet = '0x9Ac3E70dB606659Bf32D4BdFbb687AD193FD1F5B';
+const managedPoolAddressMainnet = '0xBF904F9F340745B4f0c4702c7B6Ab1e808eA6b93';
 
 const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => {
   const { getNamedAccounts, deployments } = hre;

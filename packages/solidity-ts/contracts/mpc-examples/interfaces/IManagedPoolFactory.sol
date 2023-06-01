@@ -18,12 +18,15 @@ pragma experimental ABIEncoderV2;
 import "@balancer-labs/v2-interfaces/contracts/solidity-utils/openzeppelin/IERC20.sol";
 
 interface IManagedPoolFactory {
-    struct NewPoolParams {
+    struct ManagedPoolParams {
         string name;
         string symbol;
+        address[] assetManagers;
+    }
+
+    struct ManagedPoolSettingsParams {
         IERC20[] tokens;
         uint256[] normalizedWeights;
-        address[] assetManagers;
         uint256 swapFeePercentage;
         bool swapEnabledOnStart;
         bool mustAllowlistLPs;
@@ -34,7 +37,12 @@ interface IManagedPoolFactory {
     /**
      * @dev Deploys a new `ManagedPool`. The owner should be a contract, deployed by another factory.
      */
-    function create(NewPoolParams memory poolParams, address owner) external returns (address pool);
+    function create(
+        ManagedPoolParams memory poolParams,
+        ManagedPoolSettingsParams memory settingsParams,
+        address owner,
+        bytes32 salt
+    ) external returns (address pool);
 
     /**
      * @dev Return the address of the most recently created pool.

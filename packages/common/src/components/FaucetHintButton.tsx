@@ -5,8 +5,7 @@ import { IEthComponentsSettings } from 'eth-components/models';
 import { useBalance } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { IEthersContext } from 'eth-hooks/models';
-import { utils } from 'ethers';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { useTxGasPrice } from '../../../nextjs-app-ts/src/modules/pool/hooks/useTxGasPrice';
@@ -58,14 +57,9 @@ export const FaucetHintButton: FC<IFaucetButton> = (props) => {
   const [faucetAvailable] = useDebounce(isAvailable, 500, {
     trailing: true,
   });
-  const [faucetClicked, setFaucetClicked] = useState(false);
 
   const faucetHint = useMemo(() => {
-    const min = parseFloat(utils.formatUnits(yourLocalBalance?.toBigInt() ?? 0, 'ether'));
-    const lowFunds = yourLocalBalance && min < 0.002;
-    const allowFaucet = faucetAvailable && !faucetClicked && lowFunds;
-
-    if (allowFaucet && ethersAppContext?.account != null) {
+    if (faucetAvailable && ethersAppContext?.account != null) {
       return (
         <div style={{ paddingTop: 10, paddingLeft: 10 }}>
           <Button
@@ -75,9 +69,7 @@ export const FaucetHintButton: FC<IFaucetButton> = (props) => {
                 faucetTx({
                   to: ethersAppContext?.account,
                   value: parseEther('1').toHexString(),
-                })
-                  .then(() => setFaucetClicked(true))
-                  .catch(() => setFaucetClicked(false));
+                }).catch((e) => console.error(e));
               }
             }}>
             💰 Grab funds from the faucet ⛽️

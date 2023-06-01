@@ -1,0 +1,87 @@
+.balancer-generic-contract-container {
+  margin: auto;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 20px;
+  margin-bottom: 200px;
+}
+
+.balancer-generic-contract-header {
+  display: flex;
+  flex-direction: row;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 5px;
+  margin-bottom: 16px;
+}
+
+.balancer-generic-contract-name {
+  flex: 1;
+}
+
+.balancer-copy-icon {
+  color: #1890ff !important;
+  font-size: 20px;
+  margin-left: 5px;
+}
+
+.balancer-copy-icon:hover {
+  cursor: pointer;
+  color: #40a9ff !important;
+}
+
+.balancer-function-container {
+  margin-bottom: 16px;
+}
+
+.balancer-function-button-container {
+  margin-top: 20px;
+}
+
+.balancer-function-value-container {
+  margin-top: 15px;
+  border-top: 1px solid #eeeeee;
+  padding-top: 5px;
+}
+
+.balancer-tuple-title {
+  margin-bottom: 5px !important;
+}
+
+.balancer-tuple-inputs-container {
+  padding-left: 16px;
+  border-left: 2px solid #eeeeee;
+}
+
+.balancer-input-container {
+  margin-bottom: 10px;
+}
+
+.balancer-array-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.balancer-array-input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.balancer-array-button {
+  margin-top: 22px;
+}
+
+.balancer-array-button:last-child {
+  margin-left: 5px;
+}
+
+.balancer-function-error {
+  color: #d5222b;
+  font-weight: bold;
+}
+
+.balancer-zero-button {
+  margin-left: 5px;
+  margin-bottom: 2px;
+}
